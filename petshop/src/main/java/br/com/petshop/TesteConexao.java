@@ -1,7 +1,8 @@
 package br.com.petshop;
 
 import java.sql.Connection;
-import br.com.petshop.dao.ConnectionFactory; 
+
+import br.com.petshop.util.ConnectionFactory;
 
 public class TesteConexao {
     
