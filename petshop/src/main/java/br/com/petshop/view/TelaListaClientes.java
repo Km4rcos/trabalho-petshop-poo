@@ -14,21 +14,20 @@ public class TelaListaClientes extends JDialog {
 
     public TelaListaClientes(Frame parent) {
         super(parent, "Gerenciar Clientes", true);
-        setSize(800, 500);
+        setSize(850, 500);
         setLayout(new BorderLayout(10, 10));
 
-        // Tabela
         model = new DefaultTableModel(new String[]{"ID", "CPF", "Nome", "E-mail", "Telefone"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
         };
         tabela = new JTable(model);
+        tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         add(new JScrollPane(tabela), BorderLayout.CENTER);
 
-        // Painel de botões
         JPanel painelBotoes = new JPanel();
-        JButton btnEditar = new JButton("✏️ Editar Selecionado");
-        JButton btnExcluir = new JButton("🗑️ Excluir Selecionado");
+        JButton btnEditar = new JButton("✏️ Editar");
+        JButton btnExcluir = new JButton("🗑️ Excluir");
 
         btnEditar.addActionListener(e -> acaoEditar(parent));
         btnExcluir.addActionListener(e -> acaoExcluir());
@@ -56,7 +55,6 @@ public class TelaListaClientes extends JDialog {
             return;
         }
 
-        // Criamos um objeto cliente com os dados da linha selecionada
         Cliente c = new Cliente();
         c.setId((int) model.getValueAt(linha, 0));
         c.setCpf(model.getValueAt(linha, 1).toString());
@@ -64,20 +62,20 @@ public class TelaListaClientes extends JDialog {
         c.setEmail(model.getValueAt(linha, 3).toString());
         c.setTelefone(model.getValueAt(linha, 4).toString());
 
-        // Abre a tela de cadastro em modo EDIÇÃO
         new TelaCadastroCliente(parent, c).setVisible(true);
-        carregarDados(); // Atualiza a lista após voltar
+        carregarDados(); 
     }
 
     private void acaoExcluir() {
         int linha = tabela.getSelectedRow();
         if (linha == -1) {
-            JOptionPane.showMessageDialog(this, "Selecione um cliente para excluir!");
+            JOptionPane.showMessageDialog(this, "Selecione um cliente!");
             return;
         }
 
         String cpf = model.getValueAt(linha, 1).toString();
-        int confirmacao = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja excluir o cliente com CPF " + cpf + "?", "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
+        int confirmacao = JOptionPane.showConfirmDialog(this, 
+            "Excluir cliente CPF: " + cpf + "?", "Excluir", JOptionPane.YES_NO_OPTION);
         
         if (confirmacao == JOptionPane.YES_OPTION) {
             try {
@@ -85,7 +83,7 @@ public class TelaListaClientes extends JDialog {
                 JOptionPane.showMessageDialog(this, "Cliente removido!");
                 carregarDados();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Erro ao excluir: " + ex.getMessage());
+                JOptionPane.showMessageDialog(this, "Erro: " + ex.getMessage());
             }
         }
     }

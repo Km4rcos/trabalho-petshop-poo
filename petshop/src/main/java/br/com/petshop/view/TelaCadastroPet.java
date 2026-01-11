@@ -2,87 +2,101 @@ package br.com.petshop.view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
-import br.com.petshop.dao.FactoryDAO;
-import br.com.petshop.model.Cliente;
+import br.com.petshop.controller.PetController;
 import br.com.petshop.model.Pet;
+import br.com.petshop.model.Cliente;
+import br.com.petshop.dao.FactoryDAO;
 
 public class TelaCadastroPet extends JDialog {
-
-    private JTextField txtNome, txtEspecie, txtRaca;
+    private JTextField txtNome, txtRaca, txtOutraEspecie;
+    private JComboBox<String> comboEspecie;
     private JComboBox<Cliente> comboDono;
+    private PetController controller = new PetController();
+    private Pet petEdicao = null;
 
-    public TelaCadastroPet(Frame parent) {
-        super(parent, "Cadastrar Novo Pet", true);
-        configurarJanela();
-        criarFormulario();
-        carregarClientes();
-        
+    public TelaCadastroPet(Frame p, Pet pet) {
+        super(p, pet == null ? "Novo Pet" : "Editar Pet", true);
+        this.petEdicao = pet;
+        configurarLayout();
+        if (pet != null) preencherCampos();
         pack();
-        setLocationRelativeTo(parent);
+        setLocationRelativeTo(p);
     }
 
-    private void configurarJanela() {
-        setLayout(new BorderLayout(15, 15));
-        ((JPanel)getContentPane()).setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-    }
+    private void configurarLayout() {
+        JPanel painel = new JPanel(new GridLayout(6, 2, 10, 10));
+        painel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-    private void criarFormulario() {
-        JPanel grid = new JPanel(new GridLayout(4, 2, 10, 10));
-
-        grid.add(new JLabel("Nome do Pet:"));
+        painel.add(new JLabel("Nome do Pet:"));
         txtNome = new JTextField(20);
-        grid.add(txtNome);
+        painel.add(txtNome);
 
-        grid.add(new JLabel("Espécie:"));
-        txtEspecie = new JTextField(20);
-        grid.add(txtEspecie);
+        painel.add(new JLabel("Espécie:"));
+        String[] opcoes = {"Cão", "Gato", "Outro"};
+        comboEspecie = new JComboBox<>(opcoes);
+        painel.add(comboEspecie);
 
-        grid.add(new JLabel("Raça:"));
-        txtRaca = new JTextField(20);
-        grid.add(txtRaca);
+        painel.add(new JLabel("Qual espécie? (Se outro):"));
+        txtOutraEspecie = new JTextField();
+        txtOutraEspecie.setEnabled(false); // Começa desativado
+        painel.add(txtOutraEspecie);
 
-        grid.add(new JLabel("Dono (Cliente):"));
+        // Lógica para habilitar/desabilitar o campo "Outro"
+        comboEspecie.addActionListener(e -> {
+            txtOutraEspecie.setEnabled(comboEspecie.getSelectedItem().equals("Outro"));
+        });
+
+        painel.add(new JLabel("Raça:"));
+        txtRaca = new JTextField();
+        painel.add(txtRaca);
+
+        painel.add(new JLabel("Dono:"));
         comboDono = new JComboBox<>();
-
+        for (Cliente c : FactoryDAO.getClienteDAO().listarTodos()) comboDono.addItem(c);
+        // Renderizador para mostrar nome do cliente no combo
         comboDono.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof Cliente) {
-                    setText(((Cliente) value).getNome());
-                }
+            public Component getListCellRendererComponent(JList<?> l, Object v, int i, boolean s, boolean f) {
+                super.getListCellRendererComponent(l, v, i, s, f);
+                if (v instanceof Cliente) setText(((Cliente)v).getNome());
                 return this;
             }
         });
-        grid.add(comboDono);
+        if (petEdicao != null) comboDono.setEnabled(false); // Não muda o dono na edição aqui
+        painel.add(comboDono);
 
-        add(grid, BorderLayout.CENTER);
-
-        JButton btnSalvar = new JButton("🐾 Salvar Pet");
+        JButton btnSalvar = new JButton(petEdicao == null ? "Salvar" : "Atualizar");
         btnSalvar.addActionListener(e -> acaoSalvar());
+
+        add(painel, BorderLayout.CENTER);
         add(btnSalvar, BorderLayout.SOUTH);
     }
 
-    private void carregarClientes() {
-        List<Cliente> clientes = FactoryDAO.getClienteDAO().listarTodos();
-        for (Cliente c : clientes) {
-            comboDono.addItem(c);
+    private void preencherCampos() {
+        txtNome.setText(petEdicao.getNome());
+        txtRaca.setText(petEdicao.getRaca());
+        if (petEdicao.getEspecie().equals("Cão") || petEdicao.getEspecie().equals("Gato")) {
+            comboEspecie.setSelectedItem(petEdicao.getEspecie());
+        } else {
+            comboEspecie.setSelectedItem("Outro");
+            txtOutraEspecie.setEnabled(true);
+            txtOutraEspecie.setText(petEdicao.getEspecie());
         }
     }
 
     private void acaoSalvar() {
         try {
-            Cliente donoSelecionado = (Cliente) comboDono.getSelectedItem();
-            if (donoSelecionado == null) throw new Exception("Selecione um dono!");
+            String especieFinal = comboEspecie.getSelectedItem().toString();
+            if (especieFinal.equals("Outro")) especieFinal = txtOutraEspecie.getText();
 
-            Pet novoPet = new Pet(txtNome.getText(), txtEspecie.getText(), txtRaca.getText(), donoSelecionado);
-            FactoryDAO.getPetDAO().salvar(novoPet);
-
-            JOptionPane.showMessageDialog(this, "Pet cadastrado com sucesso!");
+            if (petEdicao == null) {
+                Cliente dono = (Cliente) comboDono.getSelectedItem();
+                controller.cadastrar(txtNome.getText(), especieFinal, txtRaca.getText(), dono.getId());
+            } else {
+                controller.atualizar(petEdicao.getId(), txtNome.getText(), especieFinal, txtRaca.getText());
+            }
             dispose();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Erro: " + ex.getMessage());
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }
 }
