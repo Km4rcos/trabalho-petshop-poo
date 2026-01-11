@@ -1,25 +1,25 @@
 package br.com.petshop.model;
 
-import java.util.ArrayList;
-import java.util.List;
+public class Pet {
+    private int id;
+    private String nome;
+    private String tipo;
+    private String cpfDono; 
 
-public class Pet extends Animal {
-    private Cliente dono;
+    public Pet() {}
 
-    private List<Servico> historicoServicos = new ArrayList<>();
-
-    public Pet() {
-        super();
+    public Pet(String nome, String tipo, String cpfDono) {
+        this.nome = nome;
+        this.tipo = tipo;
+        this.cpfDono = cpfDono;
     }
 
-    public Cliente getDono() { return dono; }
-    public void setDono(Cliente dono) { this.dono = dono; }
-
-    public List<Servico> getHistorico() {
-        return this.historicoServicos;
-    }
-
-    public void adicionarServico(Servico servico) {
-        this.historicoServicos.add(servico);
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
+    public String getCpfDono() { return cpfDono; }
+    public void setCpfDono(String cpfDono) { this.cpfDono = cpfDono; }
 }
