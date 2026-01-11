@@ -3,6 +3,7 @@ package br.com.petshop.controller;
 import java.util.List;
 
 import br.com.petshop.dao.ClienteDAO;
+import br.com.petshop.dao.FactoryDAO;
 import br.com.petshop.model.Cliente;
 
 public class ClienteController {
@@ -11,11 +12,10 @@ public class ClienteController {
 
     public ClienteController() {
 
-        this.clienteDao = new ClienteDAO();
+        this.clienteDao = FactoryDAO.getClienteDAO(); 
     }
 
     public void cadastrar(String nome, String email, String telefone, String cpf) {
-        
         if (nome == null || nome.isEmpty()) {
             throw new RuntimeException("O nome é obrigatório!");
         }
@@ -31,5 +31,4 @@ public class ClienteController {
     public void excluir(String cpf) {
         clienteDao.excluirPorCpf(cpf);
     }
-
 }

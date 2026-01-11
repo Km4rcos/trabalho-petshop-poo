@@ -3,6 +3,7 @@ package br.com.petshop.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.petshop.dao.FactoryDAO; 
 import br.com.petshop.dao.ServicoDAO;
 import br.com.petshop.model.Pet;
 import br.com.petshop.model.Servico;
@@ -16,7 +17,8 @@ public class ServicoController {
     private List<Observer> observadores = new ArrayList<>();
 
     public ServicoController() {
-        this.dao = new ServicoDAO();
+       
+        this.dao = FactoryDAO.getServicoDAO();
     }
 
     public void addObserver(Observer observer) {
@@ -30,7 +32,7 @@ public class ServicoController {
     }
 
     public void agendar(String tipo, double valor, int idPet) {
-      
+        
         Servico s = new Servico();
         s.setTipo(tipo);
         s.setValor(valor);
