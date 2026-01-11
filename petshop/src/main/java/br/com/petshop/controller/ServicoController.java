@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.petshop.dao.FactoryDAO; 
 import br.com.petshop.dao.ServicoDAO;
+import br.com.petshop.exception.BusinessException;
 import br.com.petshop.model.Pet;
 import br.com.petshop.model.Servico;
 import br.com.petshop.model.StatusServico;
@@ -17,7 +18,6 @@ public class ServicoController {
     private List<Observer> observadores = new ArrayList<>();
 
     public ServicoController() {
-       
         this.dao = FactoryDAO.getServicoDAO();
     }
 
@@ -32,25 +32,28 @@ public class ServicoController {
     }
 
     public void agendar(String tipo, double valor, int idPet) {
-        
-        Servico s = new Servico();
-        s.setTipo(tipo);
-        s.setValor(valor);
-        s.setStatus(StatusServico.ESPERANDO);
-        
-        Pet p = new Pet();
-        p.setId(idPet);
-        s.setPet(p);
-
-        dao.salvar(s);
-        
-        notificar("🆕 Novo serviço agendado: " + tipo + " (Valor: R$ " + valor + ")");
+    
+    Pet p = FactoryDAO.getPetDAO().buscarPorId(idPet); 
+    
+    if (p == null) {
+        throw new BusinessException("Pet não encontrado!");
     }
+
+    Servico s = new Servico();
+    s.setTipo(tipo);
+    s.setValor(valor);
+    s.setStatus(StatusServico.ESPERANDO);
+    s.setPet(p);
+
+    dao.salvar(s);
+    
+    notificar(" " + p.getNome() + " entrou na fila para: " + tipo);
+}
 
     public void atualizarStatus(int idServico, StatusServico novoStatus) {
         dao.atualizarStatus(idServico, novoStatus);
         
-        notificar("🔄 Status atualizado! Serviço " + idServico + " agora está: " + novoStatus);
+        notificar("Status atualizado! Serviço " + idServico + " agora está: " + novoStatus);
     }
     
     public List<Servico> listarTodos() {

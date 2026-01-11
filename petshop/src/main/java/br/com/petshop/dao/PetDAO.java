@@ -15,17 +15,18 @@ import br.com.petshop.util.ConnectionFactory;
 public class PetDAO {
 
     public void salvar(Pet pet) {
-        String sql = "INSERT INTO pets (nome, especie, id_cliente) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO pets (nome, especie, raca, id_cliente) VALUES (?, ?, ?, ?)";
 
         try (Connection con = ConnectionFactory.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
             
             ps.setString(1, pet.getNome());
             ps.setString(2, pet.getEspecie());
-            ps.setInt(3, pet.getDono().getId());
+            ps.setString(3, pet.getRaca());
+            ps.setInt(4, pet.getDono().getId());
 
             ps.executeUpdate();
-            System.out.println("Pet " + pet.getNome() + " salvo para o dono ID: " + pet.getDono().getId());
+            System.out.println("Pet " + pet.getNome() + " salvo com sucesso!");
             
         } catch (SQLException e) {
             throw new BusinessException("Erro ao salvar pet: " + e.getMessage());
@@ -45,8 +46,8 @@ public class PetDAO {
                 Pet p = new Pet();
                 p.setId(rs.getInt("id"));
                 p.setNome(rs.getString("nome"));
-            
                 p.setEspecie(rs.getString("especie"));
+                p.setRaca(rs.getString("raca"));
                 
                 Cliente dono = new Cliente();
                 dono.setId(rs.getInt("id_cliente"));
@@ -60,38 +61,7 @@ public class PetDAO {
             throw new BusinessException("Erro ao listar pets: " + e.getMessage());
         }
     }
-    public void atualizar(Pet pet) {
-        String sql = "UPDATE pets SET nome = ?, especie = ?, id_cliente = ? WHERE id = ?";
 
-        try (Connection con = ConnectionFactory.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)) {
-            
-            ps.setString(1, pet.getNome());
-            ps.setString(2, pet.getEspecie());
-            ps.setInt(3, pet.getDono().getId());
-            ps.setInt(4, pet.getId());
-
-            ps.executeUpdate();
-            System.out.println("Pet ID " + pet.getId() + " atualizado com sucesso!");
-            
-        } catch (SQLException e) {
-            throw new BusinessException("Erro ao atualizar pet: " + e.getMessage());
-        }
-    }
-    public void excluir(int id) {
-        String sql = "DELETE FROM pets WHERE id = ?";
-
-        try (Connection con = ConnectionFactory.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)) {
-            
-            ps.setInt(1, id);
-            ps.executeUpdate();
-            System.out.println("Pet excluído com sucesso!");
-            
-        } catch (SQLException e) {
-            throw new BusinessException("Erro ao excluir pet: " + e.getMessage());
-        }
-    }
     public Pet buscarPorId(int id) {
         String sql = "SELECT * FROM pets WHERE id = ?";
         try (Connection con = ConnectionFactory.getConnection();
@@ -104,6 +74,7 @@ public class PetDAO {
                     p.setId(rs.getInt("id"));
                     p.setNome(rs.getString("nome"));
                     p.setEspecie(rs.getString("especie"));
+                    p.setRaca(rs.getString("raca"));
                     return p;
                 }
             }
@@ -111,5 +82,30 @@ public class PetDAO {
             throw new BusinessException("Erro ao buscar pet por ID.");
         }
         return null;
+    }
+    public void atualizar(Pet pet) {
+        String sql = "UPDATE pets SET nome = ?, especie = ?, raca = ?, id_cliente = ? WHERE id = ?";
+        try (Connection con = ConnectionFactory.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, pet.getNome());
+            ps.setString(2, pet.getEspecie());
+            ps.setString(3, pet.getRaca());
+            ps.setInt(4, pet.getDono().getId());
+            ps.setInt(5, pet.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new BusinessException("Erro ao atualizar pet.");
+        }
+    }
+
+    public void excluir(int id) {
+        String sql = "DELETE FROM pets WHERE id = ?";
+        try (Connection con = ConnectionFactory.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new BusinessException("Erro ao excluir pet.");
+        }
     }
 }
