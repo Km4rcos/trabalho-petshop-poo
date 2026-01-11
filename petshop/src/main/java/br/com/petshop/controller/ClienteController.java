@@ -42,4 +42,32 @@ public class ClienteController {
         String cpfLimpo = cpf.replaceAll("[^0-9]", "");
         clienteDao.excluirPorCpf(cpfLimpo);
     }
+    public void atualizar(String nome, String email, String telefone, String cpf) {
+    // 1. Validações básicas
+    if (nome == null || nome.trim().isEmpty()) throw new BusinessException("Nome é obrigatório!");
+    
+    // 2. Limpar CPF para busca
+    String cpfLimpo = cpf.replaceAll("[^0-9]", "");
+    
+    // 3. Buscar o cliente no banco para garantir que ele existe e pegar o ID correto
+    // Se o seu DAO não tiver buscarPorCpf, use o listarTodos e filtre ou adicione o buscarPorCpf no DAO.
+    List<Cliente> lista = clienteDao.listarTodos();
+    Cliente clienteExistente = null;
+    for(Cliente c : lista) {
+        if(c.getCpf().equals(cpfLimpo)) {
+            clienteExistente = c;
+            break;
+        }
+    }
+
+    if (clienteExistente == null) throw new BusinessException("Cliente não encontrado para atualização!");
+
+    // 4. Atualiza os dados do objeto
+    clienteExistente.setNome(nome);
+    clienteExistente.setEmail(email);
+    clienteExistente.setTelefone(telefone);
+
+    // 5. Salva a alteração
+    clienteDao.atualizar(clienteExistente);
+}
 }

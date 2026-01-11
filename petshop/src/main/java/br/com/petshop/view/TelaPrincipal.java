@@ -32,6 +32,9 @@ public class TelaPrincipal extends JFrame implements Observer {
         JButton btnP = criarBtn("🐾 Novo Pet");
         JButton btnS = criarBtn("🚿 Agendar");
         JButton btnF = criarBtn("✅ Finalizar");
+        JButton btnGerenciarClientes = criarBtn("👥 Gerenciar Clientes");
+        btnGerenciarClientes.addActionListener(e -> new TelaListaClientes(this).setVisible(true));
+        sidebar.add(btnGerenciarClientes);
 
         btnC.addActionListener(e -> new TelaCadastroCliente(this).setVisible(true));
         btnP.addActionListener(e -> new TelaCadastroPet(this).setVisible(true));
