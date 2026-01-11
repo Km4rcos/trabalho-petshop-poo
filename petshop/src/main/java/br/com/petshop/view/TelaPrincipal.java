@@ -20,7 +20,6 @@ public class TelaPrincipal extends JFrame implements Observer {
         
         configurarJanela();
         
-        // Adicionando componentes organizados
         add(criarSidebar(), BorderLayout.WEST);
         add(criarPainelCentral(), BorderLayout.CENTER);
         
@@ -37,31 +36,25 @@ public class TelaPrincipal extends JFrame implements Observer {
     }
 
     private JPanel criarSidebar() {
-        // Usando FlowLayout com alinhamento central e espaçamento vertical
         JPanel sidebar = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 15));
-        sidebar.setBackground(new Color(44, 62, 80)); // Azul Escuro Profissional
+        sidebar.setBackground(new Color(44, 62, 80)); 
         sidebar.setPreferredSize(new Dimension(230, 0));
 
-        // 1. GRUPO: CADASTROS (Ações rápidas)
+        // 1. GRUPO: CADASTROS
         sidebar.add(criarLabelTitulo("CADASTROS"));
         JButton btnNovoCliente = criarBtn("👥 Novo Cliente");
         JButton btnNovoPet = criarBtn("🐾 Novo Pet");
-        
         btnNovoCliente.addActionListener(e -> new TelaCadastroCliente(this, null).setVisible(true));
         btnNovoPet.addActionListener(e -> new TelaCadastroPet(this, null).setVisible(true));
-        
         sidebar.add(btnNovoCliente);
         sidebar.add(btnNovoPet);
 
-        // Separador Visual
         sidebar.add(criarSeparador());
 
-        // 2. GRUPO: SERVIÇOS (Operação do dia a dia)
+        // 2. GRUPO: SERVIÇOS
         sidebar.add(criarLabelTitulo("SERVIÇOS"));
         JButton btnAgendar = criarBtn("🚿 Agendar Serviço");
         JButton btnFinalizar = criarBtn("✅ Finalizar Serviço");
-        
-        // Estilo especial para o botão de finalizar
         btnFinalizar.setBackground(new Color(39, 174, 96)); 
         btnFinalizar.setForeground(Color.WHITE);
 
@@ -71,27 +64,31 @@ public class TelaPrincipal extends JFrame implements Observer {
         sidebar.add(btnAgendar);
         sidebar.add(btnFinalizar);
 
-        // Separador Visual
         sidebar.add(criarSeparador());
 
-        // 3. GRUPO: GERENCIAMENTO (Relatórios e Listas)
+        // 3. GRUPO: GERENCIAMENTO
         sidebar.add(criarLabelTitulo("GERENCIAMENTO"));
         JButton btnGerenciarClientes = criarBtn("📋 Lista Clientes");
         JButton btnGerenciarPets = criarBtn("🐕 Lista Pets");
-        JButton btnGerenciarServicos = criarBtn("📊 Histórico Serviços");
+        JButton btnHistServicos = criarBtn("📊 Histórico Serviços");
+        // NOVO: Botão de Relatório Financeiro
+        JButton btnRelatorio = criarBtn("💰 Relatório Financeiro");
+        btnRelatorio.setBackground(new Color(241, 196, 15)); // Cor dourada/amarela
+        btnRelatorio.setForeground(Color.BLACK);
 
         btnGerenciarClientes.addActionListener(e -> new TelaListaClientes(this).setVisible(true));
         btnGerenciarPets.addActionListener(e -> new TelaListaPets(this).setVisible(true));
-        btnGerenciarServicos.addActionListener(e -> new TelaListaServicos(this, controller).setVisible(true));
+        btnHistServicos.addActionListener(e -> new TelaListaServicos(this, controller).setVisible(true));
+        btnRelatorio.addActionListener(e -> new TelaRelatorio(this, controller).setVisible(true));
 
         sidebar.add(btnGerenciarClientes);
         sidebar.add(btnGerenciarPets);
-        sidebar.add(btnGerenciarServicos);
+        sidebar.add(btnHistServicos);
+        sidebar.add(btnRelatorio);
 
         return sidebar;
     }
 
-    // Métodos auxiliares para manter o código limpo (Enxugamento)
     private JLabel criarLabelTitulo(String texto) {
         JLabel label = new JLabel("<html><font color='white'><b>" + texto + "</b></font></html>");
         label.setPreferredSize(new Dimension(200, 20));
@@ -137,7 +134,8 @@ public class TelaPrincipal extends JFrame implements Observer {
     public void atualizarTabela() {
         model.setRowCount(0);
         for (Servico s : controller.listarTodos()) {
-            if (s.getStatus() != StatusServico.FINALIZADO) {
+            // MUDANÇA CRÍTICA: Não mostrar Finalizados nem Cancelados na tela principal
+            if (s.getStatus() != StatusServico.FINALIZADO && s.getStatus() != StatusServico.CANCELADO) {
                 model.addRow(new Object[]{
                     s.getId(), s.getPet().getNome(), s.getTipo(), 
                     "R$ " + String.format("%.2f", s.getValor()), s.getStatus()
@@ -150,7 +148,10 @@ public class TelaPrincipal extends JFrame implements Observer {
         int row = tabela.getSelectedRow();
         if (row != -1) {
             int id = (int) model.getValueAt(row, 0);
-            controller.atualizarStatus(id, StatusServico.FINALIZADO);
+            int resp = JOptionPane.showConfirmDialog(this, "Deseja finalizar o serviço #" + id + "?");
+            if (resp == JOptionPane.YES_OPTION) {
+                controller.atualizarStatus(id, StatusServico.FINALIZADO);
+            }
         } else {
             JOptionPane.showMessageDialog(this, "Selecione um serviço na tabela.");
         }

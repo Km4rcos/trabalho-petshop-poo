@@ -14,55 +14,49 @@ public class ServicoController {
     private ServicoDAO servicoDao;
     private List<Observer> observadores = new ArrayList<>();
 
-    // PONTO 5: Centralização de tipos de serviço para evitar erros de digitação nas telas
     public static final List<String> TIPOS_SERVICO = Arrays.asList(
-        "Banho", 
-        "Tosa", 
-        "Banho + Tosa", 
-        "Consulta", 
-        "Vacina"
+        "Banho", "Tosa", "Banho + Tosa", "Consulta", "Vacina"
     );
 
     public ServicoController() {
         this.servicoDao = FactoryDAO.getServicoDAO();
     }
 
-    public void addObserver(Observer o) {
-        this.observadores.add(o);
-    }
+    public void addObserver(Observer o) { this.observadores.add(o); }
 
     private void notificar(String mensagem) {
-        for (Observer obs : observadores) {
-            obs.atualizar(mensagem);
-        }
+        for (Observer obs : observadores) obs.atualizar(mensagem);
     }
 
     public void agendar(Servico s) {
         if (s.getPet() == null) throw new BusinessException("Selecione um Pet!");
-        if (s.getValor() <= 0) throw new BusinessException("Valor deve ser maior que zero!");
-        
+        if (s.getValor() <= 0) throw new BusinessException("Valor inválido!");
         s.setStatus(StatusServico.AGENDADO); 
         servicoDao.salvar(s);
         notificar("Agendado: " + s.getTipo() + " para " + s.getPet().getNome());
     }
 
-    public void alterar(Servico s) {
-        if (s.getValor() <= 0) throw new BusinessException("Valor inválido!");
-        servicoDao.atualizarDados(s);
-        notificar("Serviço #" + s.getId() + " alterado para " + s.getTipo());
-    }
-
-    public void excluir(int id) {
-        servicoDao.excluir(id);
-        notificar("Serviço #" + id + " removido.");
+    // MUDANÇA: Agora cancelamos em vez de excluir fisicamente
+    public void cancelar(int id) {
+        servicoDao.atualizarStatus(id, StatusServico.CANCELADO);
+        notificar("Serviço #" + id + " foi CANCELADO.");
     }
 
     public void atualizarStatus(int id, StatusServico novoStatus) {
         servicoDao.atualizarStatus(id, novoStatus);
-        notificar("Serviço #" + id + " finalizado!");
+        notificar("Serviço #" + id + " atualizado para " + novoStatus);
+    }
+
+    public double obterFaturamentoTotal() {
+        return servicoDao.calcularTotalFinalizados();
     }
 
     public List<Servico> listarTodos() {
         return servicoDao.listarTodos();
     }
+    public void alterar(Servico s) {
+    if (s.getValor() <= 0) throw new BusinessException("Valor inválido!");
+    servicoDao.atualizarDados(s); // Verifica se o DAO tem esse método
+    notificar("Serviço #" + s.getId() + " alterado para " + s.getTipo());
+}
 }

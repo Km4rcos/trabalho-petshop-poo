@@ -39,7 +39,6 @@ public class ServicoDAO {
         return lista;
     }
 
-    // MÉTODO AUXILIAR (PONTO 3): Centraliza a montagem do objeto
     private Servico extrairObjeto(ResultSet rs) throws SQLException {
         Servico s = new Servico();
         s.setId(rs.getInt("id"));
@@ -79,6 +78,8 @@ public class ServicoDAO {
         }
     }
 
+    // Mantido para caso de erro administrativo grave, 
+    // mas o Controller agora prefere usar o atualizarStatus para CANCELADO.
     public void excluir(int id) {
         String sql = "DELETE FROM servicos WHERE id = ?";
         try (Connection con = ConnectionFactory.getConnection();
@@ -88,5 +89,23 @@ public class ServicoDAO {
         } catch (SQLException e) {
             throw new BusinessException("Erro ao excluir serviço.");
         }
+    }
+
+    /**
+     * Calcula a soma de todos os serviços com status FINALIZADO.
+     * Essencial para o Relatório Financeiro.
+     */
+    public double calcularTotalFinalizados() {
+        String sql = "SELECT SUM(valor) as total FROM servicos WHERE status = 'FINALIZADO'";
+        try (Connection con = ConnectionFactory.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getDouble("total");
+            }
+        } catch (SQLException e) {
+            throw new BusinessException("Erro ao calcular faturamento.");
+        }
+        return 0.0;
     }
 }

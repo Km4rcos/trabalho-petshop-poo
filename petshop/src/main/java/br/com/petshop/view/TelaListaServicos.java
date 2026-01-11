@@ -22,17 +22,21 @@ public class TelaListaServicos extends JDialog {
             public boolean isCellEditable(int row, int column) { return false; }
         };
         tabela = new JTable(model);
+        tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         add(new JScrollPane(tabela), BorderLayout.CENTER);
 
         JPanel painelBotoes = new JPanel();
         JButton btnEditar = new JButton("✏️ Alterar");
-        JButton btnExcluir = new JButton("🗑️ Excluir");
+        JButton btnCancelar = new JButton("🚫 Cancelar Serviço");
+
+        btnCancelar.setBackground(new Color(231, 76, 60));
+        btnCancelar.setForeground(Color.WHITE);
 
         btnEditar.addActionListener(e -> acaoEditar());
-        btnExcluir.addActionListener(e -> acaoExcluir());
+        btnCancelar.addActionListener(e -> acaoCancelar());
 
         painelBotoes.add(btnEditar);
-        painelBotoes.add(btnExcluir);
+        painelBotoes.add(btnCancelar);
         add(painelBotoes, BorderLayout.SOUTH);
 
         carregarDados();
@@ -42,7 +46,13 @@ public class TelaListaServicos extends JDialog {
     private void carregarDados() {
         model.setRowCount(0);
         for (Servico s : controller.listarTodos()) {
-            model.addRow(new Object[]{s.getId(), s.getPet().getNome(), s.getTipo(), s.getValor(), s.getStatus()});
+            model.addRow(new Object[]{
+                s.getId(), 
+                s.getPet().getNome(), 
+                s.getTipo(), 
+                "R$ " + String.format("%.2f", s.getValor()), 
+                s.getStatus()
+            });
         }
     }
 
@@ -53,16 +63,24 @@ public class TelaListaServicos extends JDialog {
             return;
         }
 
+        // 1. Pegamos o ID da coluna 0 (ID)
         int id = (int) model.getValueAt(row, 0);
         
-        // PONTO 5: JComboBox usando a lista centralizada
-        JComboBox<String> comboOpcoes = new JComboBox<>(ServicoController.TIPOS_SERVICO.toArray(new String[0]));
-        comboOpcoes.setSelectedItem(model.getValueAt(row, 2).toString());
+        // 2. Preparamos o combo de tipos (PONTO 5)
+        JComboBox<String> comboServico = new JComboBox<>(ServicoController.TIPOS_SERVICO.toArray(new String[0]));
+        comboServico.setSelectedItem(model.getValueAt(row, 2).toString());
         
-        JTextField txtValor = new JTextField(model.getValueAt(row, 3).toString());
+        // 3. LIMPEZA DO VALOR (Evita NumberFormatException)
+        // Removemos "R$ ", trocamos vírgula por ponto e tiramos espaços.
+        String valorString = model.getValueAt(row, 3).toString()
+                .replace("R$", "")
+                .replace(",", ".")
+                .trim();
+        
+        JTextField txtValor = new JTextField(valorString);
 
         Object[] mensagem = {
-            "Tipo do serviço:", comboOpcoes,
+            "Selecione o novo serviço:", comboServico,
             "Novo valor (R$):", txtValor
         };
 
@@ -70,27 +88,42 @@ public class TelaListaServicos extends JDialog {
 
         if (opcao == JOptionPane.OK_OPTION) {
             try {
+                // 4. Criamos o objeto para enviar ao controller
                 Servico s = new Servico();
                 s.setId(id);
-                s.setTipo(comboOpcoes.getSelectedItem().toString());
-                s.setValor(Double.parseDouble(txtValor.getText().replace(",", ".")));
+                s.setTipo(comboServico.getSelectedItem().toString());
                 
-                controller.alterar(s);
+                // Conversão segura do texto para Double
+                double novoValor = Double.parseDouble(txtValor.getText().replace(",", "."));
+                s.setValor(novoValor);
+                
+                // 5. CHAMADA AO CONTROLLER (Certifique-se que o método se chama 'alterar')
+                controller.alterar(s); 
+                
                 carregarDados();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Erro: Digite um valor numérico válido (ex: 50.00)");
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Erro: Valor inválido!");
+                JOptionPane.showMessageDialog(this, "Erro ao alterar: " + ex.getMessage());
             }
         }
     }
 
-    private void acaoExcluir() {
+    private void acaoCancelar() {
         int row = tabela.getSelectedRow();
         if (row != -1) {
             int id = (int) model.getValueAt(row, 0);
-            if (JOptionPane.showConfirmDialog(this, "Excluir #" + id + "?", "Confirmar", 0) == 0) {
-                controller.excluir(id);
-                carregarDados();
+            int resp = JOptionPane.showConfirmDialog(this, "Deseja cancelar o serviço #" + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+            if (resp == JOptionPane.YES_OPTION) {
+                try {
+                    controller.cancelar(id);
+                    carregarDados();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Erro ao cancelar: " + ex.getMessage());
+                }
             }
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione um serviço!");
         }
     }
 }
