@@ -1,64 +1,39 @@
 package br.com.petshop.view;
 
 import javax.swing.*;
+import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import br.com.petshop.controller.ClienteController;
 
 public class TelaCadastroCliente extends JDialog {
+    private JTextField txtNome, txtEmail, txtTel;
+    private JFormattedTextField txtCpf;
+    private ClienteController controller = new ClienteController();
 
-    private JTextField txtNome, txtCpf, txtEmail, txtTelefone;
-    private ClienteController controller;
-
-    public TelaCadastroCliente(Frame parent) {
-        super(parent, "Cadastro de Cliente", true);
-        this.controller = new ClienteController();
+    public TelaCadastroCliente(Frame p) {
+        super(p, "Novo Cliente", true);
+        setLayout(new GridLayout(5, 2, 10, 10));
         
-        configurarJanela();
-        criarFormulario();
+        add(new JLabel(" Nome:")); txtNome = new JTextField(); add(txtNome);
         
-        pack();
-        setLocationRelativeTo(parent);
-    }
-
-    private void configurarJanela() {
-        setLayout(new BorderLayout(15, 15));
-        ((JPanel)getContentPane()).setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-    }
-
-    private void criarFormulario() {
-        JPanel grid = new JPanel(new GridLayout(4, 2, 10, 10));
-
-        grid.add(new JLabel("Nome:"));
-        txtNome = new JTextField(25);
-        grid.add(txtNome);
-
-        grid.add(new JLabel("CPF:"));
-        txtCpf = new JTextField(25);
-        grid.add(txtCpf);
-
-        grid.add(new JLabel("E-mail:"));
-        txtEmail = new JTextField(25);
-        grid.add(txtEmail);
-
-        grid.add(new JLabel("Telefone:"));
-        txtTelefone = new JTextField(25);
-        grid.add(txtTelefone);
-
-        add(grid, BorderLayout.CENTER);
-
-        JButton btnSalvar = new JButton("💾 Salvar Cliente");
-        btnSalvar.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        try {
+            MaskFormatter m = new MaskFormatter("###.###.###-##");
+            m.setPlaceholderCharacter('_');
+            txtCpf = new JFormattedTextField(m);
+        } catch (Exception e) { txtCpf = new JFormattedTextField(); }
         
-        btnSalvar.addActionListener(e -> {
+        add(new JLabel(" CPF:")); add(txtCpf);
+        add(new JLabel(" E-mail:")); txtEmail = new JTextField(); add(txtEmail);
+        add(new JLabel(" Tel:")); txtTel = new JTextField(); add(txtTel);
+
+        JButton btn = new JButton("Salvar");
+        btn.addActionListener(e -> {
             try {
-                controller.cadastrar(txtNome.getText(), txtEmail.getText(), txtTelefone.getText(), txtCpf.getText());
-                JOptionPane.showMessageDialog(this, "Cliente salvo com sucesso!");
+                controller.cadastrar(txtNome.getText(), txtEmail.getText(), txtTel.getText(), txtCpf.getText());
                 dispose();
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-            }
+            } catch (Exception ex) { JOptionPane.showMessageDialog(this, ex.getMessage()); }
         });
-
-        add(btnSalvar, BorderLayout.SOUTH);
+        add(btn);
+        pack(); setLocationRelativeTo(p);
     }
 }

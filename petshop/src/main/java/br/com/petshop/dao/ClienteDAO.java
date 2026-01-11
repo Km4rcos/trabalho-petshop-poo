@@ -109,4 +109,24 @@ public void excluir(int id) {
             throw new BusinessException("Erro ao excluir cliente por CPF: " + e.getMessage());
         }
     }
+    public Cliente buscarPorCpf(String cpf) {
+    String sql = "SELECT * FROM clientes WHERE cpf = ?";
+    try (Connection con = ConnectionFactory.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setString(1, cpf);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            Cliente c = new Cliente();
+            c.setId(rs.getInt("id"));
+            c.setNome(rs.getString("nome"));
+            c.setCpf(rs.getString("cpf"));
+            c.setEmail(rs.getString("email"));
+            c.setTelefone(rs.getString("telefone"));
+            return c;
+        }
+    } catch (SQLException e) {
+        throw new BusinessException("Erro ao buscar cliente.");
+    }
+    return null;
+}
 }

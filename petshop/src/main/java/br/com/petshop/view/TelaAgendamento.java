@@ -2,63 +2,42 @@ package br.com.petshop.view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
-import br.com.petshop.dao.FactoryDAO;
-import br.com.petshop.model.Pet;
 import br.com.petshop.controller.ServicoController;
+import br.com.petshop.model.Pet;
+import br.com.petshop.dao.FactoryDAO;
 
 public class TelaAgendamento extends JDialog {
-    private JComboBox<Pet> comboPets;
-    private JTextField txtTipo, txtValor;
-    private ServicoController controller;
+    private JComboBox<Pet> combo = new JComboBox<>();
+    private JTextField txtTipo = new JTextField();
+    private JTextField txtValor = new JTextField();
+    private ServicoController controller = new ServicoController();
 
-    public TelaAgendamento(Frame parent) {
-        super(parent, "Agendar Serviço", true);
-        this.controller = new ServicoController();
-        
+    public TelaAgendamento(Frame p) {
+        super(p, "Agendar", true);
         setLayout(new GridLayout(4, 2, 10, 10));
-        ((JPanel)getContentPane()).setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        add(new JLabel("Selecione o Pet:"));
-        comboPets = new JComboBox<>();
-        carregarPets();
-        add(comboPets);
-
-        add(new JLabel("Tipo (Banho/Tosa):"));
-        txtTipo = new JTextField();
-        add(txtTipo);
-
-        add(new JLabel("Valor R$:"));
-        txtValor = new JTextField();
-        add(txtValor);
-
-        JButton btnConfirmar = new JButton("Confirmar Agendamento");
-        btnConfirmar.addActionListener(e -> agendar());
-        add(btnConfirmar);
-
-        pack();
-        setLocationRelativeTo(parent);
-    }
-
-    private void carregarPets() {
-        List<Pet> pets = FactoryDAO.getPetDAO().listarTodos();
-        for (Pet p : pets) comboPets.addItem(p);
         
-        comboPets.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof Pet) setText(((Pet) value).getNome());
+        for (Pet pet : FactoryDAO.getPetDAO().listarTodos()) combo.addItem(pet);
+        combo.setRenderer(new DefaultListCellRenderer() {
+            public Component getListCellRendererComponent(JList<?> l, Object v, int i, boolean s, boolean f) {
+                super.getListCellRendererComponent(l, v, i, s, f);
+                if (v instanceof Pet) setText(((Pet)v).getNome());
                 return this;
             }
         });
-    }
 
-    private void agendar() {
-        Pet selecionado = (Pet) comboPets.getSelectedItem();
-        double valor = Double.parseDouble(txtValor.getText());
-        controller.agendar(txtTipo.getText(), valor, selecionado.getId());
-        JOptionPane.showMessageDialog(this, "Agendado!");
-        dispose();
+        add(new JLabel(" Pet:")); add(combo);
+        add(new JLabel(" Serviço:")); add(txtTipo);
+        add(new JLabel(" Valor:")); add(txtValor);
+
+        JButton btn = new JButton("Confirmar");
+        btn.addActionListener(e -> {
+            try {
+                double v = Double.parseDouble(txtValor.getText().replace(",", "."));
+                controller.agendar(txtTipo.getText(), v, ((Pet)combo.getSelectedItem()).getId());
+                dispose();
+            } catch (Exception ex) { JOptionPane.showMessageDialog(this, "Valor inválido!"); }
+        });
+        add(btn);
+        pack(); setLocationRelativeTo(p);
     }
 }
