@@ -51,11 +51,11 @@ public void salvar(Cliente cliente) {
 
             while (rs.next()) {
                 Cliente c = new Cliente();
+                c.setId(rs.getInt("id"));
                 c.setCpf(rs.getString("cpf"));
                 c.setNome(rs.getString("nome"));
                 c.setEmail(rs.getString("email"));
                 c.setTelefone(rs.getString("telefone"));
-                
                 clientes.add(c);
             }
 
