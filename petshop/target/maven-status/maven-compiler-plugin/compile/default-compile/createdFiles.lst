@@ -1,0 +1,10 @@
+br\com\petshop\model\Animal.class
+br\com\petshop\model\Pet.class
+br\com\petshop\model\Cliente.class
+br\com\petshop\App.class
+br\com\petshop\dao\PetDAO.class
+br\com\petshop\model\StatusServico.class
+br\com\petshop\util\ConnectionFactory.class
+br\com\petshop\dao\ClienteDAO.class
+br\com\petshop\model\Servico.class
+br\com\petshop\exception\BusinessException.class
