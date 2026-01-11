@@ -9,7 +9,7 @@ public class Cliente {
     private String nome;
     private String cpf;
     private String telefone;
-    private List<Animal> pets;
+    private List<Pet> pets;
 
     public Cliente(){this.pets = new ArrayList<>();}
 
@@ -24,6 +24,6 @@ public class Cliente {
     public String getTelefone() {return telefone;}
     public void setTelefone(String telefone) {this.telefone = telefone;}
 
-    public List<Animal> getPets() {return pets;}
-    public void setPets(List<Animal> pets) {this.pets = pets;}
+    public List<Pet> getPets() { return pets; }
+    public void setPets(List<Pet> pets) { this.pets = pets; }
 }
