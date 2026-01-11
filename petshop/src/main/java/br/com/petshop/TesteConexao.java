@@ -1,3 +1,5 @@
+package br.com.petshop;
+
 import java.sql.Connection;
 import br.com.petshop.dao.ConnectionFactory; 
 
