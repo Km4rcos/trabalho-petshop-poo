@@ -1,56 +1,71 @@
 package br.com.petshop;
 
-import br.com.petshop.dao.ClienteDAO;
-import br.com.petshop.dao.PetDAO;
-import br.com.petshop.model.Cliente;
-import br.com.petshop.model.Pet;
 import java.util.List;
+import java.util.Scanner;
+
+import br.com.petshop.controller.ClienteController;
+import br.com.petshop.model.Cliente;
 
 public class App {
 
     public static void main(String[] args) {
-        System.out.println("🚀 Iniciando Teste do Sistema PetShop...");
+        System.out.println("🚀 Sistema PetShop - MVC");
+        
+        ClienteController controller = new ClienteController();
+        Scanner scanner = new Scanner(System.in);
 
         try {
-            ClienteDAO clienteDao = new ClienteDAO();
-            PetDAO petDao = new PetDAO();
+            while (true) { 
+                System.out.println("\n--- MENU ---");
+                System.out.println("1 - Cadastrar Cliente");
+                System.out.println("2 - Listar Clientes");
+                System.out.println("3 - Excluir Cliente"); 
+                System.out.println("0 - Sair");
+                System.out.print("Escolha uma opção: ");
+                
+                String opcao = scanner.nextLine();
 
-            // 1. Criar e Salvar um Cliente
-            System.out.println("\n[1] Testando cadastro de Cliente...");
-            Cliente novoCliente = new Cliente("123.456.789-00", "Carlos Alberto", "carlos@email.com", "11 98888-7777");
-            clienteDao.salvar(novoCliente);
-            // Se o ID for > 0, o banco gerou a chave corretamente
-            System.out.println("✅ Cliente salvo! ID gerado no banco: " + novoCliente.getId());
-
-            // 2. Criar e Salvar um Pet vinculado a esse Cliente
-            System.out.println("\n[2] Testando cadastro de Pet...");
-            // Usando o construtor: nome, especie, raca, dono
-            Pet novoPet = new Pet("Thor", "Cachorro", "Bulldog", novoCliente);
-            petDao.salvar(novoPet);
-            System.out.println("✅ Pet salvo com sucesso!");
-
-            // 3. Listar Clientes e seus Pets para validar o JOIN
-            System.out.println("\n[3] Listando dados do Banco para validar integração:");
-            List<Pet> listaDePets = petDao.listarTodos();
-
-            if (listaDePets.isEmpty()) {
-                System.out.println("❌ Nenhum pet encontrado no banco.");
-            } else {
-                for (Pet p : listaDePets) {
-                    System.out.println("-------------------------------------------");
-                    System.out.println("Pet: " + p.getNome());
-                    System.out.println("Espécie: " + p.getEspecie());
-                    System.out.println("Dono (Recuperado via JOIN): " + p.getDono().getNome());
-                    System.out.println("ID do Dono: " + p.getDono().getId());
+                if (opcao.equals("0")) {
+                    System.out.println("Saindo...");
+                    break;
                 }
-                System.out.println("-------------------------------------------");
+                
+                else if (opcao.equals("1")) {
+                    System.out.print("Nome: ");
+                    String nome = scanner.nextLine();
+                    System.out.print("Email: ");
+                    String email = scanner.nextLine();
+                    System.out.print("Telefone: ");
+                    String tel = scanner.nextLine();
+                    System.out.print("CPF: ");
+                    String cpf = scanner.nextLine();
+
+                    controller.cadastrar(nome, email, tel, cpf);
+                    System.out.println("Cadastro realizado!");
+                } 
+                
+                else if (opcao.equals("2")) {
+                    List<Cliente> lista = controller.listarTodos();
+                    System.out.println("\n--- Lista de Clientes ---");
+                    for (Cliente c : lista) {
+                        System.out.println(" " + c.getNome() + " | CPF: " + c.getCpf() + " | " + c.getEmail());
+                    }
+                } 
+                
+                else if (opcao.equals("3")) { 
+                    System.out.print("Digite o CPF do cliente para excluir: ");
+                    String cpfParaExcluir = scanner.nextLine();
+                    
+                    controller.excluir(cpfParaExcluir);
+                    
+                    System.out.println("🗑️ Exclusão solicitada!");
+                }
             }
 
-            System.out.println("\n🏁 Teste finalizado com sucesso!");
-
         } catch (Exception e) {
-            System.err.println("\n❌ OCORREU UM ERRO NO TESTE:");
-            e.printStackTrace();
+            System.out.println("1Erro: " + e.getMessage());
+        } finally {
+            scanner.close();
         }
     }
 }

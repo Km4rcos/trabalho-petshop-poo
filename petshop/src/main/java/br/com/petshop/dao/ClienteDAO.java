@@ -4,9 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.Statement;
 
 import br.com.petshop.exception.BusinessException;
 import br.com.petshop.model.Cliente;
@@ -91,4 +91,22 @@ public void excluir(int id) {
         throw new BusinessException("Erro ao excluir cliente.");
     }
 }
+    public void excluirPorCpf(String cpf) {
+        String sql = "DELETE FROM clientes WHERE cpf = ?";
+        
+        try (Connection con = ConnectionFactory.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, cpf);
+            int linhasAfetadas = ps.executeUpdate();
+            
+            if (linhasAfetadas == 0) {
+                
+                throw new BusinessException("Nenhum cliente encontrado com o CPF: " + cpf);
+            }
+
+        } catch (SQLException e) {
+            throw new BusinessException("Erro ao excluir cliente por CPF: " + e.getMessage());
+        }
+    }
 }
