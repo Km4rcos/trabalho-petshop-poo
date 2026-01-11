@@ -5,42 +5,54 @@ import java.util.List;
 import br.com.petshop.dao.FactoryDAO;
 import br.com.petshop.dao.ServicoDAO;
 import br.com.petshop.exception.BusinessException;
-import br.com.petshop.model.Pet;
 import br.com.petshop.model.Servico;
 import br.com.petshop.model.StatusServico;
 import br.com.petshop.observer.Observer;
 
 public class ServicoController {
-    private ServicoDAO dao;
+    private ServicoDAO servicoDao;
     private List<Observer> observadores = new ArrayList<>();
 
-    public ServicoController() { this.dao = FactoryDAO.getServicoDAO(); }
-
-    public void addObserver(Observer o) { this.observadores.add(o); }
-
-    private void notificar(String msg) {
-        for (Observer o : observadores) o.atualizar(msg);
+    public ServicoController() {
+        this.servicoDao = FactoryDAO.getServicoDAO();
     }
 
-    public void agendar(String tipo, double valor, int idPet) {
-        if (valor <= 0) throw new BusinessException("O valor deve ser maior que zero!");
+    public void addObserver(Observer o) {
+        this.observadores.add(o);
+    }
+
+    private void notificar(String mensagem) {
+        for (Observer obs : observadores) {
+            obs.atualizar(mensagem);
+        }
+    }
+
+    public void agendar(Servico s) {
+        if (s.getPet() == null) throw new BusinessException("Selecione um Pet!");
+        if (s.getValor() <= 0) throw new BusinessException("Valor deve ser maior que zero!");
         
-        Pet p = FactoryDAO.getPetDAO().buscarPorId(idPet);
-        if (p == null) throw new BusinessException("Pet não encontrado!");
-
-        Servico s = new Servico();
-        s.setTipo(tipo);
-        s.setValor(valor);
-        s.setPet(p);
-
-        dao.salvar(s);
-        notificar(p.getNome() + " agendou " + tipo + " (R$ " + valor + ")");
+        s.setStatus(StatusServico.AGENDADO); 
+        servicoDao.salvar(s);
+        notificar("Agendado: " + s.getTipo() + " para " + s.getPet().getNome());
     }
 
-    public void atualizarStatus(int id, StatusServico status) {
-        dao.atualizarStatus(id, status);
-        notificar("Serviço #" + id + " atualizado para " + status);
+    public void alterar(Servico s) {
+        if (s.getValor() <= 0) throw new BusinessException("Valor inválido!");
+        servicoDao.atualizarDados(s);
+        notificar("Serviço #" + s.getId() + " alterado para " + s.getTipo() + " (R$ " + s.getValor() + ")");
     }
 
-    public List<Servico> listarTodos() { return dao.listarTodos(); }
+    public void excluir(int id) {
+        servicoDao.excluir(id);
+        notificar("Serviço #" + id + " foi removido.");
+    }
+
+    public void atualizarStatus(int id, StatusServico novoStatus) {
+        servicoDao.atualizarStatus(id, novoStatus);
+        notificar("Serviço #" + id + " finalizado!");
+    }
+
+    public List<Servico> listarTodos() {
+        return servicoDao.listarTodos();
+    }
 }
