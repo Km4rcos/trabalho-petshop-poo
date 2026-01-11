@@ -50,4 +50,34 @@ public class ServicoDAO {
             throw new BusinessException("Erro ao listar serviços: " + e.getMessage());
         }
     }
+    public void atualizarStatus(int id, StatusServico novoStatus) {
+        String sql = "UPDATE servicos SET status = ? WHERE id = ?";
+
+        try (Connection con = ConnectionFactory.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, novoStatus.name());
+            ps.setInt(2, id);
+
+            ps.executeUpdate();
+            System.out.println("Status do serviço ID " + id + " atualizado para " + novoStatus);
+            
+        } catch (SQLException e) {
+            throw new BusinessException("Erro ao atualizar status do serviço: " + e.getMessage());
+        }
+    }
+    public void excluir(int id) {
+        String sql = "DELETE FROM servicos WHERE id = ?";
+
+        try (Connection con = ConnectionFactory.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            System.out.println("Serviço excluído com sucesso!");
+            
+        } catch (SQLException e) {
+            throw new BusinessException("Erro ao excluir serviço.");
+        }
+    }
 }

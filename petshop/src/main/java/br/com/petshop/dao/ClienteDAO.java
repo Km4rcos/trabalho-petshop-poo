@@ -67,4 +67,28 @@ public void salvar(Cliente cliente) {
             throw new RuntimeException("Erro ao listar clientes", e);
         }
     }
+    public void atualizar(Cliente cliente) {
+    String sql = "UPDATE clientes SET nome = ?, telefone = ?, email = ? WHERE id = ?";
+    try (Connection con = ConnectionFactory.getConnection();
+        PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setString(1, cliente.getNome());
+        ps.setString(2, cliente.getTelefone());
+        ps.setString(3, cliente.getEmail());
+        ps.setInt(4, cliente.getId());
+        ps.executeUpdate();
+    } catch (SQLException e) {
+        throw new BusinessException("Erro ao atualizar cliente: " + e.getMessage());
+    }
+}
+
+public void excluir(int id) {
+    String sql = "DELETE FROM clientes WHERE id = ?";
+    try (Connection con = ConnectionFactory.getConnection();
+        PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setInt(1, id);
+        ps.executeUpdate();
+    } catch (SQLException e) {
+        throw new BusinessException("Erro ao excluir cliente.");
+    }
+}
 }

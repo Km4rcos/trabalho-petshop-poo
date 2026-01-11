@@ -60,4 +60,56 @@ public class PetDAO {
             throw new BusinessException("Erro ao listar pets: " + e.getMessage());
         }
     }
+    public void atualizar(Pet pet) {
+        String sql = "UPDATE pets SET nome = ?, especie = ?, id_cliente = ? WHERE id = ?";
+
+        try (Connection con = ConnectionFactory.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, pet.getNome());
+            ps.setString(2, pet.getEspecie());
+            ps.setInt(3, pet.getDono().getId());
+            ps.setInt(4, pet.getId());
+
+            ps.executeUpdate();
+            System.out.println("Pet ID " + pet.getId() + " atualizado com sucesso!");
+            
+        } catch (SQLException e) {
+            throw new BusinessException("Erro ao atualizar pet: " + e.getMessage());
+        }
+    }
+    public void excluir(int id) {
+        String sql = "DELETE FROM pets WHERE id = ?";
+
+        try (Connection con = ConnectionFactory.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            System.out.println("Pet excluído com sucesso!");
+            
+        } catch (SQLException e) {
+            throw new BusinessException("Erro ao excluir pet: " + e.getMessage());
+        }
+    }
+    public Pet buscarPorId(int id) {
+        String sql = "SELECT * FROM pets WHERE id = ?";
+        try (Connection con = ConnectionFactory.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Pet p = new Pet();
+                    p.setId(rs.getInt("id"));
+                    p.setNome(rs.getString("nome"));
+                    p.setEspecie(rs.getString("especie"));
+                    return p;
+                }
+            }
+        } catch (SQLException e) {
+            throw new BusinessException("Erro ao buscar pet por ID.");
+        }
+        return null;
+    }
 }
