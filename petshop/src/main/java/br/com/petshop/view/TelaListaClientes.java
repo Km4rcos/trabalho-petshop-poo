@@ -73,13 +73,16 @@ public class TelaListaClientes extends JDialog {
             return;
         }
 
-        String cpf = model.getValueAt(linha, 1).toString();
+        // Pegamos o ID para a exclusão (Ponto 2)
+        int id = (int) model.getValueAt(linha, 0);
+        String nome = model.getValueAt(linha, 2).toString();
+        
         int confirmacao = JOptionPane.showConfirmDialog(this, 
-            "Excluir cliente CPF: " + cpf + "?", "Excluir", JOptionPane.YES_NO_OPTION);
+            "Excluir cliente: " + nome + "?", "Excluir", JOptionPane.YES_NO_OPTION);
         
         if (confirmacao == JOptionPane.YES_OPTION) {
             try {
-                controller.excluir(cpf);
+                controller.excluir(id); // Agora passa o ID numérico
                 JOptionPane.showMessageDialog(this, "Cliente removido!");
                 carregarDados();
             } catch (Exception ex) {

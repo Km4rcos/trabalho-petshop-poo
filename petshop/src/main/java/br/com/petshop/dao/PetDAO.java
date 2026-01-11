@@ -1,12 +1,8 @@
 package br.com.petshop.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import br.com.petshop.exception.BusinessException;
 import br.com.petshop.model.Cliente;
 import br.com.petshop.model.Pet;
@@ -16,65 +12,51 @@ public class PetDAO {
 
     public void salvar(Pet pet) {
         String sql = "INSERT INTO pets (nome, especie, raca, id_cliente) VALUES (?, ?, ?, ?)";
-
         try (Connection con = ConnectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            
             ps.setString(1, pet.getNome());
             ps.setString(2, pet.getEspecie());
             ps.setString(3, pet.getRaca());
             ps.setInt(4, pet.getDono().getId());
-
             ps.executeUpdate();
-            System.out.println("Pet " + pet.getNome() + " salvo com sucesso!");
-            
         } catch (SQLException e) {
             throw new BusinessException("Erro ao salvar pet: " + e.getMessage());
         }
     }
 
     public List<Pet> listarTodos() {
-        // SQL com INNER JOIN para trazer os dados do dono junto com o pet
         String sql = "SELECT p.*, c.nome as nome_dono FROM pets p " +
                     "INNER JOIN clientes c ON p.id_cliente = c.id";
         List<Pet> pets = new ArrayList<>();
-
         try (Connection con = ConnectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-
             while (rs.next()) {
-                Pet p = montarObjetoPet(rs);
-                pets.add(p);
+                pets.add(extrairObjeto(rs));
             }
             return pets;
         } catch (SQLException e) {
-            throw new BusinessException("Erro ao listar pets: " + e.getMessage());
+            throw new BusinessException("Erro ao listar pets.");
         }
     }
 
     public Pet buscarPorId(int id) {
-        // Também usamos JOIN aqui para garantir que o Pet venha com seu Dono preenchido
         String sql = "SELECT p.*, c.nome as nome_dono FROM pets p " +
-                    "INNER JOIN clientes c ON p.id_cliente = c.id " +
-                    "WHERE p.id = ?";
+                    "INNER JOIN clientes c ON p.id_cliente = c.id WHERE p.id = ?";
         try (Connection con = ConnectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return montarObjetoPet(rs);
-                }
+                if (rs.next()) return extrairObjeto(rs);
             }
         } catch (SQLException e) {
-            throw new BusinessException("Erro ao buscar pet por ID: " + e.getMessage());
+            throw new BusinessException("Erro ao buscar pet.");
         }
         return null;
     }
 
-    // MÉTODO AUXILIAR: Evita repetição de código para montar o objeto Pet
-    private Pet montarObjetoPet(ResultSet rs) throws SQLException {
+    // MÉTODO AUXILIAR (PONTO 3): Centraliza a montagem do objeto
+    private Pet extrairObjeto(ResultSet rs) throws SQLException {
         Pet p = new Pet();
         p.setId(rs.getInt("id"));
         p.setNome(rs.getString("nome"));
@@ -85,33 +67,31 @@ public class PetDAO {
         dono.setId(rs.getInt("id_cliente"));
         dono.setNome(rs.getString("nome_dono"));
         p.setDono(dono);
-        
         return p;
     }
 
     public void atualizar(Pet pet) {
-        String sql = "UPDATE pets SET nome = ?, especie = ?, raca = ?, id_cliente = ? WHERE id = ?";
+        String sql = "UPDATE pets SET nome = ?, especie = ?, raca = ? WHERE id = ?";
         try (Connection con = ConnectionFactory.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+            PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, pet.getNome());
             ps.setString(2, pet.getEspecie());
             ps.setString(3, pet.getRaca());
-            ps.setInt(4, pet.getDono().getId());
-            ps.setInt(5, pet.getId());
+            ps.setInt(4, pet.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new BusinessException("Erro ao atualizar pet: " + e.getMessage());
+            throw new BusinessException("Erro ao atualizar pet.");
         }
     }
 
     public void excluir(int id) {
         String sql = "DELETE FROM pets WHERE id = ?";
         try (Connection con = ConnectionFactory.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+            PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new BusinessException("Erro ao excluir pet. Ele pode estar vinculado a um serviço.");
+            throw new BusinessException("Erro ao excluir: pet possui serviços vinculados.");
         }
     }
 }

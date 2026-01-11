@@ -19,7 +19,7 @@ public class ServicoDAO {
             ps.setInt(4, s.getPet().getId());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new BusinessException("Erro ao salvar serviço: " + e.getMessage());
+            throw new BusinessException("Erro ao salvar serviço.");
         }
     }
 
@@ -31,22 +31,27 @@ public class ServicoDAO {
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                Servico s = new Servico();
-                s.setId(rs.getInt("id"));
-                s.setTipo(rs.getString("tipo"));
-                s.setValor(rs.getDouble("valor"));
-                s.setStatus(StatusServico.valueOf(rs.getString("status")));
-                
-                Pet p = new Pet();
-                p.setId(rs.getInt("id_pet"));
-                p.setNome(rs.getString("nome_pet"));
-                s.setPet(p);
-                lista.add(s);
+                lista.add(extrairObjeto(rs));
             }
         } catch (SQLException e) {
             throw new BusinessException("Erro ao listar serviços.");
         }
         return lista;
+    }
+
+    // MÉTODO AUXILIAR (PONTO 3): Centraliza a montagem do objeto
+    private Servico extrairObjeto(ResultSet rs) throws SQLException {
+        Servico s = new Servico();
+        s.setId(rs.getInt("id"));
+        s.setTipo(rs.getString("tipo"));
+        s.setValor(rs.getDouble("valor"));
+        s.setStatus(StatusServico.valueOf(rs.getString("status")));
+        
+        Pet p = new Pet();
+        p.setId(rs.getInt("id_pet"));
+        p.setNome(rs.getString("nome_pet"));
+        s.setPet(p);
+        return s;
     }
 
     public void atualizarStatus(int id, StatusServico novoStatus) {
@@ -60,6 +65,7 @@ public class ServicoDAO {
             throw new BusinessException("Erro ao atualizar status.");
         }
     }
+
     public void atualizarDados(Servico s) {
         String sql = "UPDATE servicos SET tipo = ?, valor = ? WHERE id = ?";
         try (Connection con = ConnectionFactory.getConnection();
@@ -76,7 +82,7 @@ public class ServicoDAO {
     public void excluir(int id) {
         String sql = "DELETE FROM servicos WHERE id = ?";
         try (Connection con = ConnectionFactory.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {

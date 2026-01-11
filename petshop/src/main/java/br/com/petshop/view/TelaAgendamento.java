@@ -15,7 +15,7 @@ public class TelaAgendamento extends JDialog {
 
     public TelaAgendamento(Frame p, ServicoController controller) {
         super(p, "Agendar Serviço", true);
-        this.controller = controller; // Recebe o controller da TelaPrincipal
+        this.controller = controller;
         
         setLayout(new BorderLayout());
         JPanel painel = new JPanel(new GridLayout(4, 2, 10, 10));

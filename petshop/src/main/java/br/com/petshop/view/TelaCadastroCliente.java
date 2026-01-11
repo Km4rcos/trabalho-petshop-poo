@@ -8,7 +8,7 @@ import br.com.petshop.model.Cliente;
 
 public class TelaCadastroCliente extends JDialog {
     private JTextField txtNome, txtEmail;
-    private JFormattedTextField txtCpf, txtTel; // Ambos agora formatados
+    private JFormattedTextField txtCpf, txtTel;
     private ClienteController controller = new ClienteController();
     private Cliente clienteExistente = null;
 
@@ -38,7 +38,6 @@ public class TelaCadastroCliente extends JDialog {
         txtNome = new JTextField(20);
         painel.add(txtNome);
 
-        // Máscara CPF
         painel.add(new JLabel("CPF:"));
         txtCpf = criarCampoFormatado("###.###.###-##");
         if (clienteExistente != null) txtCpf.setEditable(false);
@@ -48,7 +47,6 @@ public class TelaCadastroCliente extends JDialog {
         txtEmail = new JTextField();
         painel.add(txtEmail);
 
-        // Máscara Telefone (DDD + 9 + 8 dígitos)
         painel.add(new JLabel("Telefone:"));
         txtTel = criarCampoFormatado("(##) #####-####");
         painel.add(txtTel);
@@ -60,7 +58,6 @@ public class TelaCadastroCliente extends JDialog {
         add(btnSalvar, BorderLayout.SOUTH);
     }
 
-    // Método auxiliar para não repetir código de máscara
     private JFormattedTextField criarCampoFormatado(String mascara) {
         try {
             MaskFormatter m = new MaskFormatter(mascara);
@@ -81,10 +78,12 @@ public class TelaCadastroCliente extends JDialog {
     private void acaoSalvar() {
         try {
             if (clienteExistente == null) {
+                // Cadastro Novo
                 controller.cadastrar(txtNome.getText(), txtEmail.getText(), txtTel.getText(), txtCpf.getText());
                 JOptionPane.showMessageDialog(this, "Cliente cadastrado com sucesso!");
             } else {
-                controller.atualizar(txtNome.getText(), txtEmail.getText(), txtTel.getText(), txtCpf.getText());
+                // Atualização usando o ID (Ponto 2)
+                controller.atualizar(clienteExistente.getId(), txtNome.getText(), txtEmail.getText(), txtTel.getText());
                 JOptionPane.showMessageDialog(this, "Dados atualizados com sucesso!");
             }
             dispose();
