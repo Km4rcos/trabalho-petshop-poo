@@ -1,22 +1,33 @@
 package br.com.petshop;
 
+import java.util.List;
+
 import br.com.petshop.dao.ClienteDAO;
 import br.com.petshop.model.Cliente;
 
 public class App {
 
     public static void main(String[] args) {
-        System.out.println("🚀 Sistema PetShop iniciando...");
+        System.out.println("Sistema PetShop - Relatório de Clientes");
 
         try {
-            
-            Cliente c1 = new Cliente("123.456.789-00", "Brenda Developer", "brenda@java.com", "11 99999-8888");
-
             ClienteDAO dao = new ClienteDAO();
-            dao.salvar(c1);
+
+            List<Cliente> lista = dao.listarTodos();
+
+            System.out.println("-----------------------------------------");
+            if (lista.isEmpty()) {
+                System.out.println("Nenhum cliente cadastrado ainda.");
+            } else {
+                for (Cliente c : lista) {
+                    System.out.println("Nome: " + c.getNome());
+                    System.out.println("Email: " + c.getEmail());
+                    System.out.println("-----------------------------------------");
+                }
+            }
 
         } catch (Exception e) {
-            System.out.println("Algo deu errado:");
+            System.out.println("Erro:");
             e.printStackTrace();
         }
     }
