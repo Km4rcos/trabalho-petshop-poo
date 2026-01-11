@@ -1,14 +1,15 @@
 package br.com.petshop.model;
 
 public class Servico {
-    
     private int id;
     private String tipo;
     private double valor;
     private StatusServico status;
     private Pet pet;
 
-    public Servico() {this.status = StatusServico.ESPERANDO;}
+    public Servico() {
+        this.status = StatusServico.ESPERANDO;
+    }
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

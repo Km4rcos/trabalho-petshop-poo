@@ -6,32 +6,38 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Statement;
 
+import br.com.petshop.exception.BusinessException;
 import br.com.petshop.model.Cliente;
+import br.com.petshop.util.ConnectionFactory;
 
 public class ClienteDAO {
 
-    public void salvar(Cliente cliente) {
-        String sql = "INSERT INTO clientes (cpf, nome, email, telefone) VALUES (?, ?, ?, ?)";
+public void salvar(Cliente cliente) {
+    String sql = "INSERT INTO clientes (nome, cpf, telefone, email) VALUES (?, ?, ?, ?)";
 
-        try {
-            Connection con = ConnectionFactory.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql);
-            
-            ps.setString(1, cliente.getCpf());
-            ps.setString(2, cliente.getNome());
-            ps.setString(3, cliente.getEmail());
-            ps.setString(4, cliente.getTelefone());
+    try (Connection con = ConnectionFactory.getConnection();
+        PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        
+        ps.setString(1, cliente.getNome());
+        ps.setString(2, cliente.getCpf());
+        ps.setString(3, cliente.getTelefone());
+        ps.setString(4, cliente.getEmail());
 
-            ps.execute();
-            System.out.println("Cliente " + cliente.getNome() + " salvo com sucesso!");
-            
-            ps.close();
-            con.close();
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao salvar cliente", e);
+        ps.executeUpdate();
+
+        try (ResultSet rs = ps.getGeneratedKeys()) {
+            if (rs.next()) {
+                cliente.setId(rs.getInt(1));
+            }
         }
+        System.out.println("Cliente salvo com ID: " + cliente.getId());
+        
+    } catch (SQLException e) {
+        throw new BusinessException("Erro ao salvar cliente: " + e.getMessage());
     }
+}
 
     public List<Cliente> listarTodos() {
         String sql = "SELECT * FROM clientes";
