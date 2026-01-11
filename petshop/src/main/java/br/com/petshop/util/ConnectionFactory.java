@@ -1,4 +1,4 @@
-package br.com.petshop.dao;
+package br.com.petshop.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
