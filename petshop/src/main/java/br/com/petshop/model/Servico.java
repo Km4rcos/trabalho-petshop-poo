@@ -8,7 +8,7 @@ public class Servico {
     private Pet pet;
 
     public Servico() {
-        this.status = StatusServico.ESPERANDO;
+        this.status = StatusServico.AGENDADO;
     }
 
     public int getId() { return id; }

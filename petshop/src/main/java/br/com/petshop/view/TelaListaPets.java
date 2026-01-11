@@ -13,24 +13,41 @@ public class TelaListaPets extends JDialog {
 
     public TelaListaPets(Frame p) {
         super(p, "Gerenciar Pets", true);
-        setSize(800, 400);
+        setSize(850, 450);
         setLayout(new BorderLayout());
 
-        model = new DefaultTableModel(new String[]{"ID", "Nome", "Espécie", "Raça", "Dono"}, 0);
+        // Configuração da Tabela - Desabilita edição direta nas células
+        model = new DefaultTableModel(new String[]{"ID", "Nome", "Espécie", "Raça", "Dono"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) { return false; }
+        };
+        
         tabela = new JTable(model);
+        tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tabela.setRowHeight(25);
         add(new JScrollPane(tabela), BorderLayout.CENTER);
 
-        JPanel botoes = new JPanel();
+        // Painel de Botões Inferior
+        JPanel botoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnEdit = new JButton("✏️ Editar Pet");
         JButton btnDel = new JButton("🗑️ Excluir Pet");
 
+        // PONTO 7: Ação de Editar utilizando busca direta por ID
         btnEdit.addActionListener(e -> {
             int row = tabela.getSelectedRow();
             if (row != -1) {
-                int id = (int) model.getValueAt(row, 0);
-                Pet pet = controller.listarTodos().stream().filter(x -> x.getId() == id).findFirst().get();
-                new TelaCadastroPet(p, pet).setVisible(true);
-                carregar();
+                try {
+                    int id = (int) model.getValueAt(row, 0);
+                    // Busca eficiente no banco
+                    Pet pet = controller.buscarPorId(id); 
+                    
+                    new TelaCadastroPet(p, pet).setVisible(true);
+                    carregar(); // Recarrega para mostrar as alterações
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Erro ao abrir edição: " + ex.getMessage());
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Selecione um pet na tabela para editar.");
             }
         });
 
@@ -38,15 +55,28 @@ public class TelaListaPets extends JDialog {
             int row = tabela.getSelectedRow();
             if (row != -1) {
                 int id = (int) model.getValueAt(row, 0);
-                if (JOptionPane.showConfirmDialog(this, "Excluir este pet?") == 0) {
-                    controller.excluir(id);
-                    carregar();
+                String nome = model.getValueAt(row, 1).toString();
+                
+                int confirm = JOptionPane.showConfirmDialog(this, 
+                    "Deseja realmente excluir o pet: " + nome + "?", "Confirmar Exclusão", 
+                    JOptionPane.YES_NO_OPTION);
+                
+                if (confirm == JOptionPane.YES_OPTION) {
+                    try {
+                        controller.excluir(id);
+                        JOptionPane.showMessageDialog(this, "Pet excluído com sucesso!");
+                        carregar();
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(this, "Erro ao excluir: " + ex.getMessage());
+                    }
                 }
             }
         });
 
-        botoes.add(btnEdit); botoes.add(btnDel);
+        botoes.add(btnEdit); 
+        botoes.add(btnDel);
         add(botoes, BorderLayout.SOUTH);
+
         carregar();
         setLocationRelativeTo(p);
     }
@@ -54,7 +84,13 @@ public class TelaListaPets extends JDialog {
     private void carregar() {
         model.setRowCount(0);
         for (Pet pet : controller.listarTodos()) {
-            model.addRow(new Object[]{pet.getId(), pet.getNome(), pet.getEspecie(), pet.getRaca(), pet.getDono().getNome()});
+            model.addRow(new Object[]{
+                pet.getId(), 
+                pet.getNome(), 
+                pet.getEspecie(), 
+                pet.getRaca(), 
+                pet.getDono().getNome()
+            });
         }
     }
 }

@@ -1,6 +1,7 @@
 package br.com.petshop.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import br.com.petshop.dao.FactoryDAO;
 import br.com.petshop.dao.ServicoDAO;
@@ -12,6 +13,15 @@ import br.com.petshop.observer.Observer;
 public class ServicoController {
     private ServicoDAO servicoDao;
     private List<Observer> observadores = new ArrayList<>();
+
+    // PONTO 5: Centralização de tipos de serviço para evitar erros de digitação nas telas
+    public static final List<String> TIPOS_SERVICO = Arrays.asList(
+        "Banho", 
+        "Tosa", 
+        "Banho + Tosa", 
+        "Consulta", 
+        "Vacina"
+    );
 
     public ServicoController() {
         this.servicoDao = FactoryDAO.getServicoDAO();
@@ -39,12 +49,12 @@ public class ServicoController {
     public void alterar(Servico s) {
         if (s.getValor() <= 0) throw new BusinessException("Valor inválido!");
         servicoDao.atualizarDados(s);
-        notificar("Serviço #" + s.getId() + " alterado para " + s.getTipo() + " (R$ " + s.getValor() + ")");
+        notificar("Serviço #" + s.getId() + " alterado para " + s.getTipo());
     }
 
     public void excluir(int id) {
         servicoDao.excluir(id);
-        notificar("Serviço #" + id + " foi removido.");
+        notificar("Serviço #" + id + " removido.");
     }
 
     public void atualizarStatus(int id, StatusServico novoStatus) {

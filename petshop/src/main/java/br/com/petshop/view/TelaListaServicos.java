@@ -55,15 +55,14 @@ public class TelaListaServicos extends JDialog {
 
         int id = (int) model.getValueAt(row, 0);
         
-        // --- PAINEL DE EDIÇÃO CONTROLADA ---
-        String[] opcoesServico = {"Banho", "Tosa", "Banho e Tosa", "Consulta", "Vacina"};
-        JComboBox<String> comboEspecies = new JComboBox<>(opcoesServico);
-        comboEspecies.setSelectedItem(model.getValueAt(row, 2).toString());
+        // PONTO 5: JComboBox usando a lista centralizada
+        JComboBox<String> comboOpcoes = new JComboBox<>(ServicoController.TIPOS_SERVICO.toArray(new String[0]));
+        comboOpcoes.setSelectedItem(model.getValueAt(row, 2).toString());
         
         JTextField txtValor = new JTextField(model.getValueAt(row, 3).toString());
 
         Object[] mensagem = {
-            "Selecione o novo serviço:", comboEspecies,
+            "Tipo do serviço:", comboOpcoes,
             "Novo valor (R$):", txtValor
         };
 
@@ -73,13 +72,13 @@ public class TelaListaServicos extends JDialog {
             try {
                 Servico s = new Servico();
                 s.setId(id);
-                s.setTipo(comboEspecies.getSelectedItem().toString());
+                s.setTipo(comboOpcoes.getSelectedItem().toString());
                 s.setValor(Double.parseDouble(txtValor.getText().replace(",", ".")));
                 
                 controller.alterar(s);
                 carregarDados();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Erro: Valor numérico inválido!");
+                JOptionPane.showMessageDialog(this, "Erro: Valor inválido!");
             }
         }
     }
@@ -88,8 +87,7 @@ public class TelaListaServicos extends JDialog {
         int row = tabela.getSelectedRow();
         if (row != -1) {
             int id = (int) model.getValueAt(row, 0);
-            int conf = JOptionPane.showConfirmDialog(this, "Excluir serviço #" + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
-            if (conf == JOptionPane.YES_OPTION) {
+            if (JOptionPane.showConfirmDialog(this, "Excluir #" + id + "?", "Confirmar", 0) == 0) {
                 controller.excluir(id);
                 carregarDados();
             }

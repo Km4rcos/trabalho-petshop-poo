@@ -35,7 +35,8 @@ public class TelaAgendamento extends JDialog {
         painel.add(comboPet);
 
         painel.add(new JLabel("Serviço:"));
-        comboServico = new JComboBox<>(new String[]{"Banho", "Tosa","Banho + Tosa", "Consulta", "Vacina"});
+        // PONTO 5: Consumindo a lista centralizada
+        comboServico = new JComboBox<>(ServicoController.TIPOS_SERVICO.toArray(new String[0]));
         painel.add(comboServico);
 
         painel.add(new JLabel("Valor R$:"));
