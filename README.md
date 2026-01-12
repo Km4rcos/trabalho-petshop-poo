@@ -69,9 +69,16 @@ O projeto atende aos quatro pilares da POO (Encapsulamento, Herança, Polimorfis
 
   Atenciosamente.
 ## 📸 Screenshots
-
+- Tela Principal
 ![Tela-Principal](./screenshots/Tela-Principal-do-Software.png) <br>
-
+- Tela de Cadastro de Cliente
+![Tela-de-Criação-de-Cliente](./screenshots/Tela-de-Criação-de-Cliente.png) <br>
+-Tela de Lista de Cliente
+![Tela de Criação de Cliente](./screenshots/Tela-da-Lista-de-Clientes.png) <br>
+-Tela Edição de Cliente
+![Tela de Criação de Cliente](./screenshots/Tela-Edição-de-Cliente.png) <br>
+-Tela de Criação de Pet
+![Tela de Criação de Pet](./screenshots/Tela-de-Criação-de-Pet.png) <br>
 ## 📊 Diagrama de Classes (UML)
 
 ![Diagrama](./screenshots/diagrama.png) <br>
