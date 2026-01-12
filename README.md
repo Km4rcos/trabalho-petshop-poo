@@ -43,6 +43,8 @@ O sistema foi construído seguindo rigorosamente a Orientação a Objetos:
 - Bibliotecas `.jar` necessárias (devem estar no Classpath):
   - `sqlite-jdbc.jar` (Driver do banco)
   - `flatlaf.jar` (Tema visual)
+### Diagrama
+![Dashboard](./screenshots/diagrama.png) <br>
 
 ### Passo a Passo
 1. Clone o repositório:
