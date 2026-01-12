@@ -69,29 +69,29 @@ O projeto atende aos quatro pilares da POO (Encapsulamento, Herança, Polimorfis
 
   Atenciosamente.
 ## 📸 Screenshots
-- Tela Principal
+* *Tela Principal*
 ![Tela Principal](./screenshots/Tela-Principal-do-Software.png) <br>
-- Tela de Cadastro de Cliente
+* *Tela de Cadastro de Cliente*
 ![Tela de Criação de Cliente](./screenshots/Tela-de-Criação-de-Cliente.png) <br>
--Tela de Lista de Cliente
+* *Tela de Lista de Cliente*
 ![Tela de Criação de Cliente](./screenshots/Tela-da-Lista-de-Clientes.png) <br>
--Tela Edição de Cliente
+* *Tela Edição de Cliente*
 ![Tela de Criação de Cliente](./screenshots/Tela-Edição-de-Cliente.png) <br>
--Tela de Criação de Pet
+* *Tela de Criação de Pet*
 ![Tela de Criação de Pet](./screenshots/Tela-de-Criação-de-Pet.png) <br>
--Tela de Lista de Pets
+* *Tela de Lista de Pets*
 ![Tela de Lista de Pets](./screenshots/Tela-de-Lista-de-Pets.png) <br>
--Tela de Edição de Pets
+* *Tela de Edição de Pets*
 ![Tela de Edição de Pets](./screenshots/Tela-de-Edição-de-Pets.png) <br>
--Tela de Agendamento de Serviço
+* *Tela de Agendamento de Serviço*
 ![Tela de Agendamento de Serviço](./screenshots/Tela-de-Agendamento-de-Serviço.png) <br>
--Tela de Lista de Serviços
+* *Tela de Lista de Serviços*
 ![Tela de Lista de Serviços](./screenshots/Tela-de-Lista-de-Serviços.png) <br>
--Tela de Edição do Serviço
+* *Tela de Edição do Serviço*
 ![Tela de Edição do Serviço](./screenshots/Tela-de-Edição-do-Serviço.png) <br>
--Tela de Finalização de Serviço
+* *Tela de Finalização de Serviço*
 ![Tela de Finalização de Serviço](./screenshots/Tela-de-Finalização-de-Serviço.png) <br>
--Tela do Relatiorio Financeiro
+* *Tela do Relatiorio Financeiro*
 ![Tela do Relatiorio Financeiro](./screenshots/Tela-do-Relatiorio-Financeiro.png) <br>
 ## 📊 Diagrama de Classes (UML)
 
