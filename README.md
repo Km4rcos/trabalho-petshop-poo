@@ -70,7 +70,7 @@ O projeto atende aos quatro pilares da POO (Encapsulamento, Herança, Polimorfis
   Atenciosamente.
 ## 📸 Screenshots
 
-![Tela-Principal](./screenshots/Tela-Principal.png) <br>
+![Tela-Principal](./screenshots/Tela-Principal-do-Software.png) <br>
 
 ## 📊 Diagrama de Classes (UML)
 
