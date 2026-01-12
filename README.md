@@ -64,6 +64,11 @@ O projeto atende aos quatro pilares da POO (Encapsulamento, Herança, Polimorfis
 - Execute a classe App.java (localizada no pacote br.com.petshop).
 - Ou use o .jar com o comando (java -jar petshop.jar)
 
+### P.S
+- O projeto tem o total de 64 commits, sendo 34 realizados por Marcos e 30 por Brenda. Existe uma discrepância com relação as linhas de códigos porque a commit da parte gráfica foi enviada por Marcos e esta possui uma quantidade maior de linhas. Entretanto, ambos participaram da realização integral do projeto pois se reuniram com constância e afinco para que este fosse desenvolvido da melhor maneira possível.
+
+  Atenciosamente.
+
 ## 📊 Diagrama de Classes (UML)
 
 ![Diagrama](./screenshots/diagrama.png) <br>
