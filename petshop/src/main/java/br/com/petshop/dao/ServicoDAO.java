@@ -100,4 +100,20 @@ public class ServicoDAO {
         }
         return 0.0;
     }
+    public Servico buscarPorId(int id) {
+    String sql = "SELECT s.*, p.nome as nome_pet FROM servicos s " +
+                "INNER JOIN pets p ON s.id_pet = p.id WHERE s.id = ?";
+    try (Connection con = ConnectionFactory.getConnection();
+        PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setInt(1, id);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return extrairObjeto(rs);
+            }
+        }
+    } catch (SQLException e) {
+        throw new BusinessException("Erro ao buscar serviço por ID.");
+    }
+    return null;
+}
 }

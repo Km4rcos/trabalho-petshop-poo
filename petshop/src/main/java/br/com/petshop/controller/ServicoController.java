@@ -35,8 +35,17 @@ public class ServicoController {
     }
 
     public void cancelar(int id) {
-        servicoDao.atualizarStatus(id, StatusServico.CANCELADO);
-        notificar("Serviço #" + id + " foi CANCELADO.");
+    Servico servicoAtual = servicoDao.buscarPorId(id);
+    
+    if (servicoAtual == null) {
+        throw new BusinessException("Serviço não encontrado!");
+    }
+    if (servicoAtual.getStatus() == StatusServico.FINALIZADO) {
+        throw new BusinessException("Não é possível cancelar um serviço que já foi FINALIZADO!");
+    }
+
+    servicoDao.atualizarStatus(id, StatusServico.CANCELADO);
+    notificar("Serviço #" + id + " foi CANCELADO.");
     }
 
     public void atualizarStatus(int id, StatusServico novoStatus) {
