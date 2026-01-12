@@ -43,8 +43,12 @@ public class ClienteController {
     }
 
     private void validarDados(String nome, String email, String telefone, String cpf) {
-        if (nome == null || nome.trim().isEmpty()) throw new BusinessException("O nome é obrigatório!");
-        
+        if (nome == null || nome.trim().isEmpty()) {
+        throw new BusinessException("O nome é obrigatório!");
+        }
+        if (!nome.matches("^[a-zA-ZÀ-ÿ\\s]+$")) {
+            throw new BusinessException("O nome deve conter apenas letras!");
+        }
         String cpfLimpo = cpf.replaceAll("[^0-9]", "");
         if (cpfLimpo.length() != 11) throw new BusinessException("CPF inválido!");
 
