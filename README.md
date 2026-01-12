@@ -1,52 +1,74 @@
-# 🐾 PetShop - Sistema de Gestão
+# 🐾 PetShop Pro - Sistema de Gestão
 
-Sistema de gerenciamento para PetShops desenvolvido em Java, utilizando arquitetura MVC e persistência de dados com SQLite. O projeto foca na aplicação de padrões de projeto (Design Patterns) e integridade de dados.
+> **Projeto Final da Disciplina de Programação Orientada a Objetos (POO)**
 
-## 📸 Screenshots
+Este software é uma solução completa para o gerenciamento de PetShops, desenvolvida em **Java** com foco em arquitetura robusta, código limpo e aplicação consciente de padrões de projeto. O sistema utiliza **SQLite** para persistência de dados local e o tema **FlatLaf** para uma interface moderna.
 
-| Tela Principal (Dashboard) | Cadastro de Pets |
-|:---:|:---:|
-| ![Dashboard](./screenshots/dashboard.png) <br> *Visão geral e log de notificações* | ![Cadastro](./screenshots/cadastro.png) <br> *Cadastro com seleção dinâmica de donos* |
+---
 
-*(Dica: Tire prints do sistema rodando e salve na pasta 'screenshots' do projeto)*
+## 👨‍🎓 Identificação da Dupla
 
-## 🚀 Funcionalidades
+* **Alunos:** Brenda Cristina Mota Bahia e Antonio Marcos Oliveira da Silva
+* **Semestre:** 2025.2
+* **Disciplina:** Programação Orientada a Objetos
+* **Projeto:** Sistema de Gerenciamento de PetShop com Persistência e MVC
 
-- **Gestão de Clientes:** Cadastro, listagem, edição e exclusão (com validação de CPF).
-- **Gestão de Pets:** Vínculo automático com donos e controle de espécies.
-- **Agendamento de Serviços:** Banho, Tosa, Consultas, etc.
-- **Notificações em Tempo Real:** Sistema de logs na tela principal usando o padrão **Observer**.
-- **Relatório Financeiro:** Cálculo automático de faturamento de serviços finalizados.
-- **Interface Moderna:** Visual aprimorado com a biblioteca **FlatLaf**.
+---
 
-## 🛠️ Tecnologias e Padrões Utilizados
+## 📝 Descrição e Justificativa
+
+### Descrição do Problema
+O gerenciamento manual de PetShops costuma apresentar problemas como perda de histórico de atendimentos, dificuldade em associar pets aos seus donos e falta de controle financeiro sobre os serviços prestados. Este software automatiza esses processos, garantindo a integridade dos dados e agilidade no atendimento.
+
+### Justificativa do Tema
+O projeto atende aos quatro pilares da POO (Encapsulamento, Herança, Polimorfismo e Abstração) através de:
+1.  **Relacionamentos Reais:** Exploração da relação "1 para N" (Um dono possui vários pets) com integridade referencial.
+2.  **Fluxo de Estados:** Controle de status de serviços (Agendado, Atendendo, Finalizado, Cancelado).
+3.  **Aplicabilidade:** Cenário real que exige validações robustas (CPF, Máscaras e Tratamento de Exceções).
+
+---
+
+## 🚀 Funcionalidades Obrigatórias (CRUD)
+
+- **Gestão de Clientes:** Cadastro, listagem, edição e exclusão (com validação de CPF e E-mail).
+- **Gestão de Pets:** Vínculo com donos e controle de espécies/raças.
+- **Agendamento de Serviços:** Controle de Banho, Tosa, Consultas e Vacinas.
+- **Relatório Financeiro:** Cálculo automático de faturamento baseado em serviços finalizados.
+- **Notificações em Tempo Real:** Log de operações na tela principal via padrão Observer.
+
+---
+
+## 🛠️ Tecnologias e Padrões Arquiteturais
 
 ### Tecnologias
-- **Java JDK 21+**
-- **Swing** (Interface Gráfica)
-- **SQLite** (Banco de Dados Relacional)
-- [cite_start]**FlatLaf** (Look and Feel moderno) [cite: 331]
+- **Linguagem:** Java JDK 21+
+- **GUI:** Java Swing com biblioteca **FlatLaf** (Look and Feel).
+- **Banco de Dados:** SQLite (Embarcado/Portátil).
 
 ### Padrões de Projeto (Design Patterns)
-O sistema foi construído seguindo rigorosamente a Orientação a Objetos:
-1.  **MVC (Model-View-Controller):** Separação total entre telas, lógica e banco de dados.
-2.  **DAO (Data Access Object):** Camada exclusiva para comunicação SQL (`ClienteDAO`, `PetDAO`, `ServicoDAO`).
-3.  [cite_start]**Factory Method:** Uso da `FactoryDAO` para instanciar os controladores[cite: 88].
-4.  [cite_start]**Observer:** O `ServicoController` notifica a `TelaPrincipal` sempre que um agendamento ou status muda[cite: 49, 300].
-5.  **Singleton:** Aplicado na `ConnectionFactory` para garantir uma única conexão com o banco.
+- **MVC (Model-View-Controller):** Separação clara entre View, Controller e Model.
+- **DAO (Data Access Object):** Isolamento total das instruções SQL.
+- **Factory Method:** Implementado na `FactoryDAO` e `ConnectionFactory`.
+- **Observer:** Reatividade na interface; o `ServicoController` notifica a `TelaPrincipal` sobre mudanças.
+- **Singleton:** Garantia de instância única na conexão com o banco de dados.
+
+---
 
 ## ⚙️ Como Executar o Projeto
 
 ### Pré-requisitos
 - Java JDK 21 ou superior instalado.
 - VS Code ou IntelliJ IDEA.
-- Bibliotecas `.jar` necessárias (devem estar no Classpath):
-  - `sqlite-jdbc.jar` (Driver do banco)
-  - `flatlaf.jar` (Tema visual)
-### Diagrama
-![Dashboard](./screenshots/diagrama.png) <br>
 
-### Passo a Passo
-1. Clone o repositório:
-   ```bash
-   git clone [https://github.com/seu-usuario/petshop-system.git](https://github.com/seu-usuario/petshop-system.git)# trabalho-petshop-poo
+### Execução
+- Execute a classe App.java (localizada no pacote br.com.petshop).
+- Ou use o .jar com o comando (java -jar petshop.jar)
+
+### P.S
+- O projeto tem o total de 64 commits, sendo 34 realizados por Marcos e 30 por Brenda. Existe uma discrepância com relação as linhas de códigos porque a commit da parte gráfica foi enviada por Marcos e esta possui uma quantidade maior de linhas. Entretanto, ambos participaram da realização integral do projeto pois se reuniram com constância e afinco para que este fosse desenvolvido da melhor maneira possível.
+
+  Atenciosamente.
+
+## 📊 Diagrama de Classes (UML)
+
+![Diagrama](./screenshots/diagrama.png) <br>
