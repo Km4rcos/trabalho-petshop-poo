@@ -66,48 +66,4 @@ O projeto atende aos quatro pilares da POO (Encapsulamento, Herança, Polimorfis
 
 ## 📊 Diagrama de Classes (UML)
 
-Representação da estrutura de classes e relacionamentos (Gerado via Mermaid):
-
-```mermaid
-classDiagram
-    %% Relações de Herança e Implementação
-    Animal <|-- Pet
-    Observer <|.. TelaPrincipal
-    
-    %% Relações de Associação
-    Cliente "1" --> "*" Pet : possui
-    Pet "1" --> "*" Servico : histórico
-    ServicoController --> ServicoDAO : usa
-    ClienteController --> ClienteDAO : usa
-    ServicoController --* Observer : notifica
-
-    class Cliente {
-        -int id
-        -String nome
-        -String cpf
-        -String telefone
-        -String email
-    }
-    class Animal {
-        <<Abstract>>
-        -int id
-        -String nome
-        -String especie
-        -String raca
-    }
-    class Pet {
-        -Cliente dono
-        -List~Servico~ historico
-    }
-    class Servico {
-        -int id
-        -String tipo
-        -double valor
-        -StatusServico status
-    }
-    class ServicoController {
-        +agendar(Servico)
-        +cancelar(int)
-        +atualizarStatus(int, Status)
-        -notificar()
-    }
+![Diagrama](./screenshots/diagrama.png) <br>
