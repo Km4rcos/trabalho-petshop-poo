@@ -40,7 +40,6 @@ public class TelaPrincipal extends JFrame implements Observer {
         sidebar.setBackground(new Color(44, 62, 80)); 
         sidebar.setPreferredSize(new Dimension(230, 0));
 
-        // 1. GRUPO: CADASTROS
         sidebar.add(criarLabelTitulo("CADASTROS"));
         JButton btnNovoCliente = criarBtn("👥 Novo Cliente");
         JButton btnNovoPet = criarBtn("🐾 Novo Pet");
@@ -51,7 +50,6 @@ public class TelaPrincipal extends JFrame implements Observer {
 
         sidebar.add(criarSeparador());
 
-        // 2. GRUPO: SERVIÇOS
         sidebar.add(criarLabelTitulo("SERVIÇOS"));
         JButton btnAgendar = criarBtn("🚿 Agendar Serviço");
         JButton btnFinalizar = criarBtn("✅ Finalizar Serviço");
@@ -66,14 +64,12 @@ public class TelaPrincipal extends JFrame implements Observer {
 
         sidebar.add(criarSeparador());
 
-        // 3. GRUPO: GERENCIAMENTO
         sidebar.add(criarLabelTitulo("GERENCIAMENTO"));
         JButton btnGerenciarClientes = criarBtn("📋 Lista Clientes");
         JButton btnGerenciarPets = criarBtn("🐕 Lista Pets");
         JButton btnHistServicos = criarBtn("📊 Histórico Serviços");
-        // NOVO: Botão de Relatório Financeiro
         JButton btnRelatorio = criarBtn("💰 Relatório Financeiro");
-        btnRelatorio.setBackground(new Color(241, 196, 15)); // Cor dourada/amarela
+        btnRelatorio.setBackground(new Color(241, 196, 15));
         btnRelatorio.setForeground(Color.BLACK);
 
         btnGerenciarClientes.addActionListener(e -> new TelaListaClientes(this).setVisible(true));
@@ -134,7 +130,6 @@ public class TelaPrincipal extends JFrame implements Observer {
     public void atualizarTabela() {
         model.setRowCount(0);
         for (Servico s : controller.listarTodos()) {
-            // MUDANÇA CRÍTICA: Não mostrar Finalizados nem Cancelados na tela principal
             if (s.getStatus() != StatusServico.FINALIZADO && s.getStatus() != StatusServico.CANCELADO) {
                 model.addRow(new Object[]{
                     s.getId(), s.getPet().getNome(), s.getTipo(), 

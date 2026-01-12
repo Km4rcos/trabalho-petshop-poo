@@ -13,7 +13,7 @@ public class PetDAO {
     public void salvar(Pet pet) {
         String sql = "INSERT INTO pets (nome, especie, raca, id_cliente) VALUES (?, ?, ?, ?)";
         try (Connection con = ConnectionFactory.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+            PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, pet.getNome());
             ps.setString(2, pet.getEspecie());
             ps.setString(3, pet.getRaca());
@@ -29,8 +29,8 @@ public class PetDAO {
                     "INNER JOIN clientes c ON p.id_cliente = c.id";
         List<Pet> pets = new ArrayList<>();
         try (Connection con = ConnectionFactory.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 pets.add(extrairObjeto(rs));
             }
@@ -44,7 +44,7 @@ public class PetDAO {
         String sql = "SELECT p.*, c.nome as nome_dono FROM pets p " +
                     "INNER JOIN clientes c ON p.id_cliente = c.id WHERE p.id = ?";
         try (Connection con = ConnectionFactory.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+            PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return extrairObjeto(rs);
@@ -55,7 +55,6 @@ public class PetDAO {
         return null;
     }
 
-    // MÉTODO AUXILIAR (PONTO 3): Centraliza a montagem do objeto
     private Pet extrairObjeto(ResultSet rs) throws SQLException {
         Pet p = new Pet();
         p.setId(rs.getInt("id"));

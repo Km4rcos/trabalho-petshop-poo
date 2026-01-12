@@ -25,8 +25,5 @@ public class Pet extends Animal {
     public void setDono(Cliente dono) { this.dono = dono; }
 
     public List<Servico> getHistoricoServicos() { return historicoServicos; }
-    
-    public void adicionarServico(Servico servico) {
-        this.historicoServicos.add(servico);
-    }
+    public void adicionarServico(Servico servico) {this.historicoServicos.add(servico);}
 }

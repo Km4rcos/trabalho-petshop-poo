@@ -10,7 +10,7 @@ public class ClienteController {
     private ClienteDAO clienteDao;
 
     public ClienteController() {
-        this.clienteDao = FactoryDAO.getClienteDAO(); 
+        this.clienteDao = FactoryDAO.getClienteDAO();
     }
 
     public void cadastrar(String nome, String email, String telefone, String cpf) {
@@ -54,11 +54,6 @@ public class ClienteController {
         if (telLimpo.length() < 10) throw new BusinessException("Telefone inválido!");
     }
 
-    public List<Cliente> listarTodos() {
-        return clienteDao.listarTodos();
-    }
-    
-    public void excluir(int id) {
-        clienteDao.excluir(id);
-    }
+    public List<Cliente> listarTodos() {return clienteDao.listarTodos();}
+    public void excluir(int id) {clienteDao.excluir(id);}
 }

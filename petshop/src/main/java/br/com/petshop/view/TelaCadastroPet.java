@@ -38,10 +38,9 @@ public class TelaCadastroPet extends JDialog {
 
         painel.add(new JLabel("Qual espécie? (Se outro):"));
         txtOutraEspecie = new JTextField();
-        txtOutraEspecie.setEnabled(false); // Começa desativado
+        txtOutraEspecie.setEnabled(false);
         painel.add(txtOutraEspecie);
 
-        // Lógica para habilitar/desabilitar o campo "Outro"
         comboEspecie.addActionListener(e -> {
             txtOutraEspecie.setEnabled(comboEspecie.getSelectedItem().equals("Outro"));
         });
@@ -53,7 +52,6 @@ public class TelaCadastroPet extends JDialog {
         painel.add(new JLabel("Dono:"));
         comboDono = new JComboBox<>();
         for (Cliente c : FactoryDAO.getClienteDAO().listarTodos()) comboDono.addItem(c);
-        // Renderizador para mostrar nome do cliente no combo
         comboDono.setRenderer(new DefaultListCellRenderer() {
             public Component getListCellRendererComponent(JList<?> l, Object v, int i, boolean s, boolean f) {
                 super.getListCellRendererComponent(l, v, i, s, f);
@@ -61,7 +59,7 @@ public class TelaCadastroPet extends JDialog {
                 return this;
             }
         });
-        if (petEdicao != null) comboDono.setEnabled(false); // Não muda o dono na edição aqui
+        if (petEdicao != null) comboDono.setEnabled(false);
         painel.add(comboDono);
 
         JButton btnSalvar = new JButton(petEdicao == null ? "Salvar" : "Atualizar");

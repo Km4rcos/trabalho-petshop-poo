@@ -78,11 +78,9 @@ public class TelaCadastroCliente extends JDialog {
     private void acaoSalvar() {
         try {
             if (clienteExistente == null) {
-                // Cadastro Novo
                 controller.cadastrar(txtNome.getText(), txtEmail.getText(), txtTel.getText(), txtCpf.getText());
                 JOptionPane.showMessageDialog(this, "Cliente cadastrado com sucesso!");
             } else {
-                // Atualização usando o ID (Ponto 2)
                 controller.atualizar(clienteExistente.getId(), txtNome.getText(), txtEmail.getText(), txtTel.getText());
                 JOptionPane.showMessageDialog(this, "Dados atualizados com sucesso!");
             }

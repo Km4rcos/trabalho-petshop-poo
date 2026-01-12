@@ -47,9 +47,9 @@ public class TelaListaServicos extends JDialog {
         model.setRowCount(0);
         for (Servico s : controller.listarTodos()) {
             model.addRow(new Object[]{
-                s.getId(), 
-                s.getPet().getNome(), 
-                s.getTipo(), 
+                s.getId(),
+                s.getPet().getNome(),
+                s.getTipo(),
                 "R$ " + String.format("%.2f", s.getValor()), 
                 s.getStatus()
             });
@@ -63,15 +63,11 @@ public class TelaListaServicos extends JDialog {
             return;
         }
 
-        // 1. Pegamos o ID da coluna 0 (ID)
         int id = (int) model.getValueAt(row, 0);
         
-        // 2. Preparamos o combo de tipos (PONTO 5)
         JComboBox<String> comboServico = new JComboBox<>(ServicoController.TIPOS_SERVICO.toArray(new String[0]));
         comboServico.setSelectedItem(model.getValueAt(row, 2).toString());
         
-        // 3. LIMPEZA DO VALOR (Evita NumberFormatException)
-        // Removemos "R$ ", trocamos vírgula por ponto e tiramos espaços.
         String valorString = model.getValueAt(row, 3).toString()
                 .replace("R$", "")
                 .replace(",", ".")
@@ -88,17 +84,14 @@ public class TelaListaServicos extends JDialog {
 
         if (opcao == JOptionPane.OK_OPTION) {
             try {
-                // 4. Criamos o objeto para enviar ao controller
                 Servico s = new Servico();
                 s.setId(id);
                 s.setTipo(comboServico.getSelectedItem().toString());
                 
-                // Conversão segura do texto para Double
                 double novoValor = Double.parseDouble(txtValor.getText().replace(",", "."));
                 s.setValor(novoValor);
                 
-                // 5. CHAMADA AO CONTROLLER (Certifique-se que o método se chama 'alterar')
-                controller.alterar(s); 
+                controller.alterar(s);
                 
                 carregarDados();
             } catch (NumberFormatException ex) {

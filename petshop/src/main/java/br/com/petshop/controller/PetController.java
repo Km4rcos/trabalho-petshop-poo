@@ -40,19 +40,13 @@ public class PetController {
         
         petDao.atualizar(pet);
     }
-
-    // PONTO 7: Método para buscar um pet específico sem carregar a lista toda
     public Pet buscarPorId(int id) {
         Pet pet = petDao.buscarPorId(id);
         if (pet == null) throw new BusinessException("Pet não localizado no banco de dados.");
         return pet;
     }
 
-    public void excluir(int id) {
-        petDao.excluir(id);
-    }
-
-    public List<Pet> listarTodos() {
-        return petDao.listarTodos();
-    }
+    public void excluir(int id) {petDao.excluir(id);}
+    public List<Pet> listarTodos() {return petDao.listarTodos();}
+    
 }

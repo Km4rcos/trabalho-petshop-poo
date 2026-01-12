@@ -14,9 +14,7 @@ public class ServicoController {
     private ServicoDAO servicoDao;
     private List<Observer> observadores = new ArrayList<>();
 
-    public static final List<String> TIPOS_SERVICO = Arrays.asList(
-        "Banho", "Tosa", "Banho + Tosa", "Consulta", "Vacina"
-    );
+    public static final List<String> TIPOS_SERVICO = Arrays.asList("Banho", "Tosa", "Banho + Tosa", "Consulta", "Vacina");
 
     public ServicoController() {
         this.servicoDao = FactoryDAO.getServicoDAO();
@@ -31,12 +29,11 @@ public class ServicoController {
     public void agendar(Servico s) {
         if (s.getPet() == null) throw new BusinessException("Selecione um Pet!");
         if (s.getValor() <= 0) throw new BusinessException("Valor inválido!");
-        s.setStatus(StatusServico.AGENDADO); 
+        s.setStatus(StatusServico.AGENDADO);
         servicoDao.salvar(s);
         notificar("Agendado: " + s.getTipo() + " para " + s.getPet().getNome());
     }
 
-    // MUDANÇA: Agora cancelamos em vez de excluir fisicamente
     public void cancelar(int id) {
         servicoDao.atualizarStatus(id, StatusServico.CANCELADO);
         notificar("Serviço #" + id + " foi CANCELADO.");
@@ -56,7 +53,7 @@ public class ServicoController {
     }
     public void alterar(Servico s) {
     if (s.getValor() <= 0) throw new BusinessException("Valor inválido!");
-    servicoDao.atualizarDados(s); // Verifica se o DAO tem esse método
+    servicoDao.atualizarDados(s);
     notificar("Serviço #" + s.getId() + " alterado para " + s.getTipo());
 }
 }

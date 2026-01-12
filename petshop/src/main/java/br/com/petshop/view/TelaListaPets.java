@@ -15,8 +15,6 @@ public class TelaListaPets extends JDialog {
         super(p, "Gerenciar Pets", true);
         setSize(850, 450);
         setLayout(new BorderLayout());
-
-        // Configuração da Tabela - Desabilita edição direta nas células
         model = new DefaultTableModel(new String[]{"ID", "Nome", "Espécie", "Raça", "Dono"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
@@ -27,22 +25,19 @@ public class TelaListaPets extends JDialog {
         tabela.setRowHeight(25);
         add(new JScrollPane(tabela), BorderLayout.CENTER);
 
-        // Painel de Botões Inferior
         JPanel botoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnEdit = new JButton("✏️ Editar Pet");
         JButton btnDel = new JButton("🗑️ Excluir Pet");
 
-        // PONTO 7: Ação de Editar utilizando busca direta por ID
         btnEdit.addActionListener(e -> {
             int row = tabela.getSelectedRow();
             if (row != -1) {
                 try {
                     int id = (int) model.getValueAt(row, 0);
-                    // Busca eficiente no banco
-                    Pet pet = controller.buscarPorId(id); 
+                    Pet pet = controller.buscarPorId(id);
                     
                     new TelaCadastroPet(p, pet).setVisible(true);
-                    carregar(); // Recarrega para mostrar as alterações
+                    carregar();
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "Erro ao abrir edição: " + ex.getMessage());
                 }
@@ -57,8 +52,8 @@ public class TelaListaPets extends JDialog {
                 int id = (int) model.getValueAt(row, 0);
                 String nome = model.getValueAt(row, 1).toString();
                 
-                int confirm = JOptionPane.showConfirmDialog(this, 
-                    "Deseja realmente excluir o pet: " + nome + "?", "Confirmar Exclusão", 
+                int confirm = JOptionPane.showConfirmDialog(this,
+                    "Deseja realmente excluir o pet: " + nome + "?", "Confirmar Exclusão",
                     JOptionPane.YES_NO_OPTION);
                 
                 if (confirm == JOptionPane.YES_OPTION) {
@@ -85,10 +80,10 @@ public class TelaListaPets extends JDialog {
         model.setRowCount(0);
         for (Pet pet : controller.listarTodos()) {
             model.addRow(new Object[]{
-                pet.getId(), 
-                pet.getNome(), 
-                pet.getEspecie(), 
-                pet.getRaca(), 
+                pet.getId(),
+                pet.getNome(),
+                pet.getEspecie(),
+                pet.getRaca(),
                 pet.getDono().getNome()
             });
         }

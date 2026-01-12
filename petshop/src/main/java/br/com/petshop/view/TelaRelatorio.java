@@ -13,7 +13,6 @@ public class TelaRelatorio extends JDialog {
 
         double total = controller.obterFaturamentoTotal();
 
-        // Painel de exibição
         JPanel painel = new JPanel(new GridLayout(2, 1));
         painel.setBackground(Color.WHITE);
         painel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
@@ -23,7 +22,7 @@ public class TelaRelatorio extends JDialog {
 
         JLabel lblValor = new JLabel("R$ " + String.format("%.2f", total), SwingConstants.CENTER);
         lblValor.setFont(new Font("Arial", Font.BOLD, 36));
-        lblValor.setForeground(new Color(39, 174, 96)); // Verde Sucesso
+        lblValor.setForeground(new Color(39, 174, 96));
 
         painel.add(lblTitulo);
         painel.add(lblValor);
